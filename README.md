@@ -50,13 +50,13 @@ Where `sequence` is the input sequence, and `label` is the corresponding label f
 With the appropriate supervised datasets, we can use the script to fine-tune a model for predicting promoters, for example:
 ```bash
 python model_finetune.py \
-    --model_name_or_path /path_to_the_model/plant_dnagpt_base \
+    --model_name_or_path /path_to_the_model/plant-dnagpt \
     --train_data /path_to_the_data/train.csv \
     --test_data /path_to_the_data/test.csv \
     --eval_data /path_to_the_data/dev.csv \
     --train_task classification \
     --labels 'No;Yes' \
-    --run_name plant_dnabert_promoters \
+    --run_name plant_dnagpt_promoters \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 8 \
     --learning_rate 1e-5 \
@@ -66,7 +66,7 @@ python model_finetune.py \
     --save_strategy epoch \
     --logging_strategy epoch \
     --evaluation_strategy epoch \
-    --output_dir finetune/plant_dnabert_promoter
+    --output_dir finetune/plant-dnagpt-promoter
 ```
 
 In this script:  
@@ -98,9 +98,9 @@ We also provide a script named `model_inference.py` for model inference.
 Here is an example that use the script to predict histone modification:
 ```bash
 # Directly input a sequence
-python model_inference.py -m /path_to_the_model/plant_dnagpt_H3K27ac -s sequence
+python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -s sequence
 # Provide a file contains multiple sequence to predict
-python model_inference.py -m /path_to_the_model/plant_dnagpt_H3K27ac -f /path_to_the_data/data.txt -o results/H3K27ac.txt
+python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -f /path_to_the_data/data.txt -o results/H3K27ac.txt
 ```
 
 In this script:
@@ -157,7 +157,7 @@ docker pull zhangtaolab/plant_llms_inference:cpu
 docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cpu -h
 ```
 
-The detailed usage is the same as the section [Inference](##3.-Inference).
+The detailed usage is the same as the section [Inference](##-3.-Inference).
 
 
 ## Citation
