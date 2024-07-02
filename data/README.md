@@ -1,0 +1,2 @@
+We provide a sample dataset includes sequence with (1) or without (0) H3K27ac histone modification for fine-tune and inference.  
+Detailed information about how to generate fine-tune data can be found in the supplementary information of our manuscript.

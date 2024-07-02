@@ -1,0 +1,16 @@
+python model_finetune.py \
+    --model_name_or_path models/plant-dnagpt \
+    --train_data data/train.csv \
+    --eval_data data/dev.csv \
+    --test_data data/test.csv \
+    --labels 'Not_H3K27ac;H3K27ac' \
+    --train_task classification \
+    --run_name plant_dnagpt_H3K27ac \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 8 \
+    --learning_rate 1e-5 \
+    --num_train_epochs 5 \
+    --save_strategy epoch \
+    --logging_strategy epoch \
+    --evaluation_strategy epoch \
+    --output_dir plant-dnagpt_H3K27ac

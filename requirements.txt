@@ -1,0 +1,10 @@
+accelerate
+datasets
+evaluate
+numpy<2.0
+peft
+scipy
+scikit-learn
+torch
+tqdm
+transformers<4.43
