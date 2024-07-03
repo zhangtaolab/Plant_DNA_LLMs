@@ -105,14 +105,14 @@ Here is an example that use the script to predict histone modification:
 ```bash
 # Directly input a sequence
 python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -s sequence
-# Provide a file contains multiple sequence to predict
+# Provide a file contains multiple sequences to predict
 python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -f /path_to_the_data/data.txt -o results/H3K27ac.txt
 ```
 
 In this script:
 1. `-m`: Path to the fine-tuned model that is used for inference
 2. `-s`: Input DNA sequence, only nucleotide A, C, G, T, N are acceptable
-3. `-f`: Input file that contain multiple sequence, one line for each sequence. If you want to keep more information, file with `,` of `\t` separation is acceptable, but a header contains `sequence` column must be specified.
+3. `-f`: Input file that contain multiple sequences, one line for each sequence. If you want to keep more information, file with `,` of `\t` separator is acceptable, but a header contains `sequence` column must be specified.
 
 Output results contains the original sequence, input sequence length, predicted label and probability of each label (for regression task, will show a predicted score).
 
