@@ -34,6 +34,12 @@ cd Plant_DNA_LLMs
 python3 -m pip install -r requirements.txt
 ```
 
+(Optional) If you want to train a [mamba](https://github.com/state-spaces/mamba) model, you need to install several extra dependencies, also you should have a Nvidia GPU.
+```bash
+pip install causal-conv1d<=1.2.0
+pip install mamba-ssm<2.0.0
+```
+
 
 ## 2. Fine-tune
 
@@ -157,7 +163,7 @@ docker pull zhangtaolab/plant_llms_inference:cpu
 docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cpu -h
 ```
 
-The detailed usage is the same as the section [Inference](##-3.-Inference).
+The detailed usage is the same as the section [Inference](#3-inference).
 
 
 ## Citation
