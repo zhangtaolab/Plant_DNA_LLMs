@@ -1,8 +1,8 @@
 ## 1. Environment
 
-[Anaconda](https://docs.anaconda.com/free/anaconda/install/) or [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.
+[Anaconda](https://docs.anaconda.com/free/anaconda/install/) or [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.
 
-#### 1.1 Download and install [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html)
+#### 1.1 Download and install [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) package manager
 
 #### 1.2 Create environment (We trained the models with python 3.11)
 
