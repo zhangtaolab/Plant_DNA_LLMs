@@ -53,6 +53,8 @@ sequence,label
 ```
 Where `sequence` is the input sequence, and `label` is the corresponding label for the sequence.
 
+We also provide several plant genomic datasets for fine-tuning on the [HuggingFace](https://huggingface.co/zhangtaolab).
+
 With the appropriate supervised datasets, we can use the script to fine-tune a model for predicting promoters, for example:
 ```bash
 python model_finetune.py \
@@ -166,7 +168,3 @@ docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cp
 The detailed usage is the same as the section [Inference](#3-inference).
 
 
-## Citation
-
-If you used our models, please cite the following article:  
-- xxx, xxx, et al.
