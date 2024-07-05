@@ -1,3 +1,5 @@
+# Plant foundation DNA large language models (LLMs)
+
 ## 1. Environment
 
 [Anaconda](https://docs.anaconda.com/free/anaconda/install/) or [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.
