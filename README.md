@@ -175,3 +175,5 @@ The web application is accessible at https://bioinfor.yzu.edu.cn/llms/open-chrom
 
 Preview:
 
+![gradio](imgs/gradio.jpeg)
+
