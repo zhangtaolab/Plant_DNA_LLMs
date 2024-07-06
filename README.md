@@ -169,7 +169,7 @@ docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cp
 
 The detailed usage is the same as the section [Inference](#3-inference).
 
-### Demo server for open chormtain prediction
+### Demo for open chormtain prediction
 we also provide demo server for open chormtain prediction by using Plant DNAMamba model.  
 The web application is accessible at https://bioinfor.yzu.edu.cn/llms/open-chromatin/ or http://llms.zhangtaolab.org/llms/open-chromatin.
 
