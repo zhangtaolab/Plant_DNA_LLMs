@@ -125,7 +125,7 @@ Output results contains the original sequence, input sequence length, predicted 
 
 Environment deployment for LLMs may be an arduous job. To simplify this process, we also provide a docker version of our model inference code.
 
-The images of the docker version are [here](https://hub.docker.com/repository/docker/zhangtaolab/plant_llms_inference), and the usage of docker implementation is shown below.  
+The images of the docker version are [here](https://hub.docker.com/r/zhangtaolab/plant_llms_inference), and the usage of docker implementation is shown below.  
 For GPU inference (with Nvidia GPU), please pull the image with `gpu` tag, and make sure your computer has install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 ```bash
 docker pull zhangtaolab/plant_llms_inference:gpu
