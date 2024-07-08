@@ -1,0 +1,3 @@
+[submodule "evaluate"]
+	path = evaluate
+	url = https://github.com/huggingface/evaluate

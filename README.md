@@ -31,7 +31,7 @@ python3 -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 Next install other required dependencies.
 ```bash
-git clone https://github.com/zhangtaolab/Plant_DNA_LLMs
+git clone --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
 cd Plant_DNA_LLMs
 python3 -m pip install -r requirements.txt
 ```
