@@ -2,7 +2,6 @@
 #! /usr/bin/env python
 
 import os
-os.environ['HF_HOME'] = '/root/autodl-tmp/cache/'
 # os.environ['NCCL_P2P_DISABLE'] = '1'
 # os.environ['NCCL_IB_DISABLE'] = '1'
 
