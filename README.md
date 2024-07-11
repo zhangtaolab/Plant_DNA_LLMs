@@ -42,10 +42,18 @@ pip install causal-conv1d<=1.2.0
 pip install mamba-ssm<2.0.0
 ```
 
+### Pretrained Models
+| Base model             | Model name                   | Params | Hugging Face | Model Scope |
+| :--------------------: | :--------------------------: | :----: | :----------: | :---------: |
+| BERT                   | Plant DNABERT                | 92M    | [download](https://huggingface.co/zhangtaolab/plant-dnabert) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnabert) |
+| GPT-2                  | Plant DNAGPT                 | 92M    | [download](https://huggingface.co/zhangtaolab/plant-dnagpt) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnagpt) |
+| Nucleotide Transformer | Plant Nucleotide Transformer | 102M   | [download](https://huggingface.co/zhangtaolab/plant-nucleotide-transformer) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-nucleotide-transformer) |
+| Gemma                  | Plant DNAGemma               | 152M   | [download](https://huggingface.co/zhangtaolab/plant-dnagemma) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnagemma) |
+| Mamba                  | Plant DNAMamba               | 130M   | [download](https://huggingface.co/zhangtaolab/plant-dnamamba) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnamamba) |
 
 ## 2. Fine-tune
 
-To fine-tune the plant DNA LLMs, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) to local. You can use `git clone` (which may require `git-lfs` to be installed) to retrieve the model or directly download the model from the website.
+To fine-tune the plant DNA LLMs, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local. You can use `git clone` (which may require `git-lfs` to be installed) to retrieve the model or directly download the model from the website.
 
 In the activated `llms` python environment, use the `model_finetune.py` script to fine-tune a model for downstream task.  
 
@@ -55,7 +63,7 @@ sequence,label
 ```
 Where `sequence` is the input sequence, and `label` is the corresponding label for the sequence.
 
-We also provide several plant genomic datasets for fine-tuning on the [HuggingFace](https://huggingface.co/zhangtaolab).
+We also provide several plant genomic datasets for fine-tuning on the [HuggingFace](https://huggingface.co/zhangtaolab) and [ModelScope](https://www.modelscope.cn/organization/zhangtaolab).
 
 With the appropriate supervised datasets, we can use the script to fine-tune a model for predicting promoters, for example:
 ```bash
@@ -102,7 +110,7 @@ Detailed descriptions of the arguments can be referred [here](https://huggingfac
 
 ## 3. Inference
 
-To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) to local or provide a model trained by yourself.  
+To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.  
 
 We also provide a script named `model_inference.py` for model inference.  
 Here is an example that use the script to predict histone modification:
