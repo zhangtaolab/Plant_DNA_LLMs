@@ -1,4 +1,13 @@
-# Plant foundation DNA large language models (LLMs)
+<h1>
+  <p align="center">
+  Plant foundation DNA large language models (LLMs)
+  </p>
+</h1>
+
+<p align="center">
+  <b>English | </b>
+  <a href="README_zh.md" target="_blank"><b>简体中文</b></a>
+</p>
 
 ## 1. Environment
 
@@ -19,14 +28,16 @@ If you want to pre-train or fine-tune models, make sure you are using Nvidia GPU
 Install [Nvidia driver](https://www.nvidia.com/download/index.aspx) and corresponding version of [CUDA driver](https://developer.nvidia.com/cuda-downloads) (> 11.0, we used CUDA 12.1).  
 
 Also [Pytorch](https://pytorch.org/) (>=2.0) with corresponding CUDA version should also install.  
-We recommend to use `pip` to install python packages that needed.  
+We recommend to use `pip` to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to [Official Website](https://pytorch.org/) for the detailed installation tutorial of pytorch.
+
 ```bash
-python3 -m pip install torch --index-url https://download.pytorch.org/whl/cu121
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
 ```
 
-If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.  
+If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.
+
 ```bash
-python3 -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
 ```
 
 Next install other required dependencies.
@@ -37,19 +48,23 @@ python3 -m pip install -r requirements.txt
 ```
 
 (Optional) If you want to train a [mamba](https://github.com/state-spaces/mamba) model, you need to install several extra dependencies, also you should have a Nvidia GPU.
+
 ```bash
-pip install causal-conv1d<=1.2.0
-pip install mamba-ssm<2.0.0
+pip install 'causal-conv1d<=1.3'
+pip install 'mamba-ssm<2'
 ```
 
-### Pretrained Models
-| Base model             | Model name                   | Params | Hugging Face | Model Scope |
-| :--------------------: | :--------------------------: | :----: | :----------: | :---------: |
-| BERT                   | Plant DNABERT                | 92M    | [download](https://huggingface.co/zhangtaolab/plant-dnabert) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnabert) |
-| GPT-2                  | Plant DNAGPT                 | 92M    | [download](https://huggingface.co/zhangtaolab/plant-dnagpt) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnagpt) |
-| Nucleotide Transformer | Plant Nucleotide Transformer | 102M   | [download](https://huggingface.co/zhangtaolab/plant-nucleotide-transformer) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-nucleotide-transformer) |
-| Gemma                  | Plant DNAGemma               | 152M   | [download](https://huggingface.co/zhangtaolab/plant-dnagemma) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnagemma) |
-| Mamba                  | Plant DNAMamba               | 130M   | [download](https://huggingface.co/zhangtaolab/plant-dnamamba) | [download](https://www.modelscope.cn/models/zhangtaolab/plant-dnamamba) |
+#### 1.4 Install git-lfs
+`glt-lfs` is required for download large models and datasets，`git-lfs` installation can be refer to [git-lfs install](https://github.com/git-lfs/git-lfs?utm_source=gitlfs_site&utm_medium=installation_link&utm_campaign=gitlfs#installing).
+
+If `git-lfs` is installed, run the following command
+```bash
+$ git lfs version
+```
+will get message like this
+```bash
+git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.8)
+```
 
 ## 2. Fine-tune
 
@@ -65,16 +80,33 @@ Where `sequence` is the input sequence, and `label` is the corresponding label f
 
 We also provide several plant genomic datasets for fine-tuning on the [HuggingFace](https://huggingface.co/zhangtaolab) and [ModelScope](https://www.modelscope.cn/organization/zhangtaolab).
 
-With the appropriate supervised datasets, we can use the script to fine-tune a model for predicting promoters, for example:
+* Here is the [pretrain models list](docs/pretrain_models_en.md)
+
+We use Plant DNAGPT model as example to predict active core promoter.
+
+First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:
+
+```bash
+# prepare a work directory
+mkdir LLM_finetune
+cd LLM_finetune
+# download pretrain model
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE
+# download train dataset
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+```
+
+After preparing the model and dataset, using the following script to finetune model (here is a promoter prediction example)
+
 ```bash
 python model_finetune.py \
-    --model_name_or_path /path_to_the_model/plant-dnagpt \
-    --train_data /path_to_the_data/train.csv \
-    --test_data /path_to_the_data/test.csv \
-    --eval_data /path_to_the_data/dev.csv \
+    --model_name_or_path plant-dnagpt-BPE \
+    --train_data plant-multi-species-core-promoters/train.csv \
+    --test_data plant-multi-species-core-promoters/test.csv \
+    --eval_data plant-multi-species-core-promoters/dev.csv \
     --train_task classification \
-    --labels 'No;Yes' \
-    --run_name plant_dnagpt_promoters \
+    --labels 'Not promoter;Core promoter' \
+    --run_name plant_dnagpt_BPE_promoter \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 8 \
     --learning_rate 1e-5 \
@@ -84,7 +116,7 @@ python model_finetune.py \
     --save_strategy epoch \
     --logging_strategy epoch \
     --evaluation_strategy epoch \
-    --output_dir finetune/plant-dnagpt-promoter
+    --output_dir plant-dnagpt-BPE-promoter
 ```
 
 In this script:  
@@ -108,17 +140,22 @@ In this script:
 
 Detailed descriptions of the arguments can be referred [here](https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments).
 
+Finally, wait for the progress bar completed, and the fine-tuned model will be saved in the `plant-dnagpt-BPE-promoter` directory. In this directory, there will be a checkpoint directory, a runs directory, and a saved fine-tuning model.
+
 ## 3. Inference
 
-To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.  
+To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.
+
+* Here is the [finetune models list](docs/finetune_models_en.md)
 
 We also provide a script named `model_inference.py` for model inference.  
 Here is an example that use the script to predict histone modification:
 ```bash
-# Directly input a sequence
-python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -s sequence
-# Provide a file contains multiple sequences to predict
-python model_inference.py -m /path_to_the_model/plant-dnagpt-H3K27ac -f /path_to_the_data/data.txt -o results/H3K27ac.txt
+# (method 1) Directly input a sequence
+python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+
+# (method 2) Provide a file contains multiple sequences to predict
+python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
 ```
 
 In this script:
@@ -126,19 +163,41 @@ In this script:
 2. `-s`: Input DNA sequence, only nucleotide A, C, G, T, N are acceptable
 3. `-f`: Input file that contain multiple sequences, one line for each sequence. If you want to keep more information, file with `,` of `\t` separator is acceptable, but a header contains `sequence` column must be specified.
 
-Output results contains the original sequence, input sequence length, predicted label and probability of each label (for regression task, will show a predicted score).
+Output results contains the original sequence, input sequence length. If the task type is classification, predicted label and probability of each label will provide; If the task type is regression, a predicted score will provide.
 
 
-## Docker implementation for model inference
+### 4. Docker implementation for model inference
 
 Environment deployment for LLMs may be an arduous job. To simplify this process, we also provide a docker version of our model inference code.
 
-The images of the docker version are [here](https://hub.docker.com/r/zhangtaolab/plant_llms_inference), and the usage of docker implementation is shown below.  
+The images of the docker version are [here](https://hub.docker.com/r/zhangtaolab/plant_llms_inference), and the usage of docker implementation is shown below.
+
+#### Inference using GPU
+
 For GPU inference (with Nvidia GPU), please pull the image with `gpu` tag, and make sure your computer has install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+
+First download a finetune model from Huggingface or ModelScope, here we use Plant DNAMamba model as an example to predict active core promoters。
+
+```bash
+# prepare a work directory
+mkdir LLM_inference
+cd LLM_inference
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnamamba-BPE-promoter
+```
+
+Then download the corresponding dataset, and if users have their own data, users can also prepare a custom dataset based on the previously mentioned inference data format.
+
+```bash
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+```
+
+Once the model and dataset are ready, pull our model inference image from docker and test if it works.
+
 ```bash
 docker pull zhangtaolab/plant_llms_inference:gpu
 docker run --runtime=nvidia --gpus=all -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:gpu -h
 ```
+
 ```bash
 usage: inference.py [-h] [-v] -m MODEL [-f FILE] [-s SEQUENCE] [-t THRESHOLD]
                     [-l MAX_LENGTH] [-bs BATCH_SIZE] [-p SAMPLE] [-seed SEED]
@@ -169,19 +228,84 @@ Example:
   docker run --runtime=nvidia --gpus=all -v /local:/container zhangtaolab/plant_llms_inference:gpu -m model_path -s 'ATCGGATCTCGACAGT' -o output.txt
 ```
 
+If the preceding information is displayed, the image is downloaded and the inference script can run normally. 
+Inference is performed below using previously prepared models and datasets.
+
+```bash
+docker run --runtime=nvidia --gpus=all -v ./:/home/llms zhangtaolab/plant_llms_inference:gpu -m /home/llms/plant-dnamamba-BPE-promoter -f /home/llms/plant-multi-species-core-promoters/test.csv -o /home/llms/predict_results.txt
+```
+
+After the inference progress bar is completed, see the output file `predict_results.txt` in the current local directory, which saves the prediction results corresponding to each sequence in the input file.
+
+#### Inference using CPU
+
 For CPU inference,  please pull the image with `cpu` tag, this image support computer without NVIDIA GPU, such as cpu-only or Apple M-series Silicon. (Note that Inference of DNAMamba model is not supported in CPU mode)
+
+First download a finetune model from Huggingface or ModelScope, here we use Plant DNAGPT model as an example to predict active core promoters。
+
+```bash
+# prepare a work directory
+mkdir LLM_inference
+cd LLM_inference
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter
+```
+
+Then download the corresponding dataset, and if users have their own data, users can also prepare a custom dataset based on the previously mentioned inference data format.
+
+```bash
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+```
+
+Once the model and dataset are ready, pull our model inference image from docker and test if it works.
+
 ```bash
 docker pull zhangtaolab/plant_llms_inference:cpu
 docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cpu -h
 ```
 
-The detailed usage is the same as the section [Inference](#3-inference).
+```bash
+usage: inference.py [-h] [-v] -m MODEL [-f FILE] [-s SEQUENCE] [-t THRESHOLD]
+                    [-l MAX_LENGTH] [-bs BATCH_SIZE] [-p SAMPLE] [-seed SEED]
+                    [-d {cpu,gpu,mps,auto}] [-o OUTFILE] [-n]
 
-### Demo for open chormtain prediction
-we also provide demo server for open chormtain prediction by using Plant DNAMamba model.  
-The web application is accessible at https://bioinfor.yzu.edu.cn/llms/open-chromatin/ or http://llms.zhangtaolab.org/llms/open-chromatin.
+Script for Plant DNA Large Language Models (LLMs) inference
 
-Preview:
+options:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -m MODEL              Model path (should contain both model and tokenizer)
+  -f FILE               File contains sequences that need to be classified
+  -s SEQUENCE           One sequence that need to be classified
+  -t THRESHOLD          Threshold for defining as True class (Default: 0.5)
+  -l MAX_LENGTH         Max length of tokenized sequence (Default: 512)
+  -bs BATCH_SIZE        Batch size for classification (Default: 1)
+  -p SAMPLE             Subsampling for testing (Default: 1e7)
+  -seed SEED            Random seed for subsampling (Default: None)
+  -d {cpu,gpu,mps,auto}
+                        Choose CPU or GPU to do inference (require specific
+                        drivers) (Default: auto)
+  -o OUTFILE            Prediction results (Default: stdout)
+  -n                    Whether or not save the runtime locally (Default:
+                        False)
 
-![gradio](imgs/gradio.jpeg)
+Example:
+  docker run -v /local:/container zhangtaolab/plant_llms_inference:gpu -m model_path -f seqfile.csv -o output.txt
+  docker run -v /local:/container zhangtaolab/plant_llms_inference:gpu -m model_path -s 'ATCGGATCTCGACAGT' -o output.txt
+```
 
+If the preceding information is displayed, the image is downloaded and the inference script can run normally. 
+Inference is performed below using previously prepared models and datasets.
+
+```bash
+docker run -v ./:/home/llms zhangtaolab/plant_llms_inference:cpu -m /home/llms/plant-dnagpt-BPE-promoter -f /home/llms/plant-multi-species-core-promoters/test.csv -o /home/llms/predict_results.txt
+```
+
+After the inference progress bar is completed, see the output file `predict_results.txt` in the current local directory, which saves the prediction results corresponding to each sequence in the input file.
+
+* The detailed usage is the same as the section [Inference](#3-inference).
+
+### Online prediction platform
+
+In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
+
+Please refer to [online prediction platform](docs/platforms_en.md)
