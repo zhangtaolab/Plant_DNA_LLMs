@@ -12,6 +12,13 @@
   <a href="README.md" target="_blank"><b>English</b></a>
 </p>
 
+
+## 0. 模型预测DEMO
+
+![demo](imgs/modelscope_demo.gif)
+
+其他模型和对应任务的在线预测可以在[这里](#online-prediction-platform)查看.
+
 ## 1. 环境配置
 
 推荐使用[Anaconda](https://docs.anaconda.com/free/anaconda/install/)包管理工具构建模型训练环境。对于预训练和微调模型，请确保你的电脑包含NVIDIA显卡，并且对应的显卡驱动正确安装。对于模型的推理，不包含显卡的设备，如纯CPU、苹果芯片等也可以使用。
@@ -85,7 +92,7 @@ sequence,label
 
 * 预训练模型的列表可参考 [预训练模型列表](docs/pretrain_models_zh.md)
 
-这里我们以基于BPE tokenizer的Plant DNAGPT模型为例，预测植物活性启动子。
+这里我们以基于BPE tokenizer的Plant DNAGPT模型为例，微调预测植物活性启动子的大语言模型。
 
 首先先从ModelScope或Huggingface下载微调模型和对应的数据集：
 
@@ -151,20 +158,38 @@ python model_finetune.py \
 
 * 微调模型的列表可参考 [微调模型列表](docs/finetune_models_zh.md)
 
-我们同样提供了模型推理的脚本 `model_inference.py` ，下面是一个预测植物活性启动子的例子：
+这里我们以基于BPE tokenizer的Plant DNAGPT模型为例，预测植物活性启动子。
+
+首先先从ModelScope或Huggingface下载微调模型和对应的数据集：
 
 ```bash
-# （方法1）直接输入序列
+# 准备一个工作目录
+mkdir LLM_inference
+cd LLM_inference
+# 下载预训练模型
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter
+# 下载训练数据集
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+```
+
+我们同样提供了模型推理的脚本 `model_inference.py` ，下面是预测植物活性启动子的例子：
+
+```bash
+# （方法1）使用本地模型推理（直接输入序列）
 python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
-# （方法2）提供一个包含多条待预测序列的文件用于推理
+# （方法2）使用本地模型推理（提供一个包含多条待预测序列的文件用于推理）
 python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+
+# （方法3）使用在线下载的模型进行推理（直接从modelscope或huggingface读取我们训练的模型，不从本地读取）
+python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms modelscope -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
 ```
 
 以上的命令中，不同参数的介绍如下：  
 1. `-m`: 微调模型的路径
 2. `-s`: 待预测的序列, 只支持包含A, C, G, T, N碱基的序列
 3. `-f`: 包含多条待预测序列的文件，一行对应一条序列。如果需要保留更多的信息，使用 `,` 或者 `\t` 分隔符，但是包含表头的 `sequence` 列必须指定
+4. `-ms`: 如果模型没有下载到本地，可以从`modelscope`或`huggingface`读取，模型名称格式为`zhangtaolab/model-name`
 
 输出结果会包含原始序列，序列的长度，如果是分类任务，会返回预测的分类结果及其对应的预测可能性；如果是回归任务，会返回预测的得分。
 
