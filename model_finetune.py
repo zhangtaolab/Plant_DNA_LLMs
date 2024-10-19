@@ -33,63 +33,63 @@ except:
 
 ############################################################
 ## Arguments ###############################################
+
+@dataclass
+class ModelArguments:
+    model_name_or_path: Optional[str] = field(default="./models/plantdnabert")
+    tokenizer_path: Optional[str] = field(default=None)
+    train_task: Optional[str] = field(default='classification')
+    load_checkpoint: Optional[str] = field(default=None)
+    # select model source
+    source: Optional[str] = field(default="huggingface")
+
+@dataclass
+class DataArguments:
+    train_data: str = field(default=None, metadata={"help": "Path to the training data."})
+    eval_data: Optional[str] = field(default=None, metadata={"help": "Path to the valid data."})
+    test_data: Optional[str] = field(default=None, metadata={"help": "Path to the test data."})
+    split: float = field(default=0.1, metadata={"help": "Test split"})
+    samples: Optional[int] = field(default=1e8)
+    key: str = field(default='sequence', metadata={"help": "Feature name"})
+    kmer: int = field(default=-1, metadata={"help": "k-mer for DNABERT model"})
+    labels: str = field(default='No;Yes', metadata={"help": "Labels"})
+    shuffle: bool = field(default=False)
+
+@dataclass
+class TrainingArguments(TrainingArguments):
+    cache_dir: Optional[str] = field(default=None)
+    run_name: str = field(default="runs")
+    optim: str = field(default="adamw_torch")
+    model_max_length: int = field(default=512, metadata={"help": "Maximum sequence length."})
+    gradient_accumulation_steps: int = field(default=1)
+    per_device_train_batch_size: int = field(default=1)
+    per_device_eval_batch_size: int = field(default=1)
+    num_train_epochs: int = field(default=1)
+    fp16: bool = field(default=False)
+    bf16: bool = field(default=False)
+    logging_steps: Optional[int] = field(default=500)
+    logging_strategy: str = field(default='epoch'),
+    save_steps: Optional[int] = field(default=200)
+    save_strategy: str = field(default='epoch'),
+    eval_steps: Optional[int] = field(default=None)
+    evaluation_strategy: str = field(default='epoch'),
+    # eval_accumulation_steps: Optional[int] = field(default=None),
+    warmup_steps: int = field(default=50)
+    weight_decay: float = field(default=0.01)
+    learning_rate: float = field(default=1e-5)
+    save_total_limit: int = field(default=5)
+    load_best_model_at_end: bool = field(default=True)
+    output_dir: str = field(default="output")
+    find_unused_parameters: bool = field(default=False)
+    checkpointing: bool = field(default=False)
+    dataloader_pin_memory: bool = field(default=False)
+    seed: int = field(default=7)
+
+############################################################
+
+############################################################
+## Mamba model configurations ##############################
 if mamba_available:
-    @dataclass
-    class ModelArguments:
-        model_name_or_path: Optional[str] = field(default="./models/plantdnabert")
-        tokenizer_path: Optional[str] = field(default=None)
-        train_task: Optional[str] = field(default='classification')
-        load_checkpoint: Optional[str] = field(default=None)
-        # select model source
-        source: Optional[str] = field(default="huggingface")
-
-    @dataclass
-    class DataArguments:
-        train_data: str = field(default=None, metadata={"help": "Path to the training data."})
-        eval_data: Optional[str] = field(default=None, metadata={"help": "Path to the valid data."})
-        test_data: Optional[str] = field(default=None, metadata={"help": "Path to the test data."})
-        split: float = field(default=0.1, metadata={"help": "Test split"})
-        samples: Optional[int] = field(default=1e8)
-        key: str = field(default='sequence', metadata={"help": "Feature name"})
-        kmer: int = field(default=-1, metadata={"help": "k-mer for DNABERT model"})
-        labels: str = field(default='No;Yes', metadata={"help": "Labels"})
-        shuffle: bool = field(default=False)
-
-    @dataclass
-    class TrainingArguments(TrainingArguments):
-        cache_dir: Optional[str] = field(default=None)
-        run_name: str = field(default="runs")
-        optim: str = field(default="adamw_torch")
-        model_max_length: int = field(default=512, metadata={"help": "Maximum sequence length."})
-        gradient_accumulation_steps: int = field(default=1)
-        per_device_train_batch_size: int = field(default=1)
-        per_device_eval_batch_size: int = field(default=1)
-        num_train_epochs: int = field(default=1)
-        fp16: bool = field(default=False)
-        bf16: bool = field(default=False)
-        logging_steps: Optional[int] = field(default=500)
-        logging_strategy: str = field(default='epoch'),
-        save_steps: Optional[int] = field(default=200)
-        save_strategy: str = field(default='epoch'),
-        eval_steps: Optional[int] = field(default=None)
-        evaluation_strategy: str = field(default='epoch'),
-        # eval_accumulation_steps: Optional[int] = field(default=None),
-        warmup_steps: int = field(default=50)
-        weight_decay: float = field(default=0.01)
-        learning_rate: float = field(default=1e-5)
-        save_total_limit: int = field(default=5)
-        load_best_model_at_end: bool = field(default=True)
-        output_dir: str = field(default="output")
-        find_unused_parameters: bool = field(default=False)
-        checkpointing: bool = field(default=False)
-        dataloader_pin_memory: bool = field(default=False)
-        seed: int = field(default=7)
-
-    ############################################################
-
-
-    ############################################################
-    ## Mamba model configurations ##############################
 
     @dataclass
     class MambaConfig:
@@ -403,7 +403,6 @@ def evaluate_metrics(task):
 
 
 def train():
-    from transformers import TrainingArguments, Trainer, HfArgumentParser
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
