@@ -417,6 +417,7 @@ def train():
             from modelscope import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         else:
             from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
+    from transformers import TrainingArguments, Trainer, HfArgumentParser
 
     # load tokenizer
     if not model_args.tokenizer_path:
