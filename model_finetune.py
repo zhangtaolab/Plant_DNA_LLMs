@@ -405,15 +405,14 @@ def train():
     # define model source
     if os.path.exists(model_args.model_name_or_path):
         model_args.source = "local"
-        prefix = ""
+        from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
     else:
         if model_args.source == "huggingface":
-            prefix = "https://huggingface.co/"
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         elif model_args.source == "modelscope":
-            prefix = "https://modelscope.cn/models/"
+            from modelscope import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         else:
-            prefix = "https://huggingface.co/"
-    model_args.model_name_or_path = prefix + model_args.model_name_or_path
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
 
     # load tokenizer
     if not model_args.tokenizer_path:
