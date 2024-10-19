@@ -31,13 +31,13 @@ Also [Pytorch](https://pytorch.org/) (>=2.0) with corresponding CUDA version sho
 We recommend to use `pip` to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to [Official Website](https://pytorch.org/) for the detailed installation tutorial of pytorch.
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
+pip install 'torch<2.5' 
 ```
 
 If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
+pip install 'torch<2.5' 
 ```
 
 Next install other required dependencies.

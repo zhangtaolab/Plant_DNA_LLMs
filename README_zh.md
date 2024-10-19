@@ -33,13 +33,13 @@ conda activate llms
 另外，对应版本的[Pytorch](https://pytorch.org/)包（版本>=2.0）也要安装好。推荐使用 `pip` 安装python依赖包。请一定认真安装对应的cuda和torch版本，本测试环境中使用的cuda版本为12.1。pytorch详细安装教程请参考[官方网站](https://pytorch.org/)。
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
+pip install 'torch<2.5' 
 ```
 
 如果只需要进行模型推理（预测任务），也可以只安装CPU版本的Pytorch。
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
+pip install 'torch<2.5' 
 ```
 
 下一步，克隆本仓库，并安装其他模型训练/推理所需的依赖。
