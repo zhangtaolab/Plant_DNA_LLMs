@@ -189,7 +189,9 @@ python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms modelscop
 1. `-m`: 微调模型的路径
 2. `-s`: 待预测的序列, 只支持包含A, C, G, T, N碱基的序列
 3. `-f`: 包含多条待预测序列的文件，一行对应一条序列。如果需要保留更多的信息，使用 `,` 或者 `\t` 分隔符，但是包含表头的 `sequence` 列必须指定
-4. `-ms`: 如果模型没有下载到本地，可以从`modelscope`或`huggingface`读取，模型名称格式为`zhangtaolab/model-name`
+4. `-ms`: 如果模型没有下载到本地，可以从`modelscope`或`huggingface`读取，模型名称格式为`zhangtaolab/model-name`, 用户可以从这里复制模型名，防止拼写错误
+
+![copy](imgs/modelscope_copy.png)
 
 输出结果会包含原始序列，序列的长度，如果是分类任务，会返回预测的分类结果及其对应的预测可能性；如果是回归任务，会返回预测的得分。
 
