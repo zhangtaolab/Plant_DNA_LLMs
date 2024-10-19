@@ -36,6 +36,8 @@ class ModelArguments:
     tokenizer_path: Optional[str] = field(default=None)
     train_task: Optional[str] = field(default='classification')
     load_checkpoint: Optional[str] = field(default=None)
+    # select model source
+    source: Optional[str] = field(default="huggingface")
 
 @dataclass
 class DataArguments:
@@ -400,6 +402,19 @@ def train():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
+    # define model source
+    if os.path.exists(model_args.model_name_or_path):
+        model_args.source = "local"
+        prefix = ""
+    else:
+        if model_args.source == "huggingface":
+            prefix = "https://huggingface.co/"
+        elif model_args.source == "modelscope":
+            prefix = "https://modelscope.cn/models/"
+        else:
+            prefix = "https://huggingface.co/"
+    model_args.model_name_or_path = prefix + model_args.model_name_or_path
+
     # load tokenizer
     if not model_args.tokenizer_path:
         model_args.tokenizer_path = model_args.model_name_or_path
@@ -481,7 +496,7 @@ def train():
 
     # load model
     if num_labels:
-        if 'mamba' in model_args.model_name_or_path:
+        if 'mamba' in model_args.model_name_or_path.lower():
             if num_labels == 1:
                 model = MambaSequenceRegression.from_pretrained(model_args.model_name_or_path)
             else:
@@ -512,7 +527,7 @@ def train():
     compute_metrics = evaluate_metrics(model_args.train_task.lower())
 
     # define trainer
-    if ('DNABERT-2' in model_args.model_name_or_path) or ('dnabert2' in model_args.model_name_or_path):
+    if ('DNABERT-2' in model_args.model_name_or_path) or ('dnabert2' in model_args.model_name_or_path.lower()):
         r2_metric = evaluate.load("evaluate/metrics/r_squared/r_squared.py")
         spm_metric = evaluate.load("evaluate/metrics/spearmanr/spearmanr.py")
         clf_metrics = evaluate.combine(["evaluate/metrics/accuracy/accuracy.py",
@@ -567,7 +582,7 @@ def train():
                           eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
                           compute_metrics=compute_metrics,
                           preprocess_logits_for_metrics=preprocess_logits_for_metrics)
-    elif 'mamba' in model_args.model_name_or_path:
+    elif 'mamba' in model_args.model_name_or_path.lower():
         trainer = MambaTrainer(
                   model=model,
                   tokenizer=tokenizer,
