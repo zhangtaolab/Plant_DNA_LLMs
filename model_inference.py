@@ -370,7 +370,7 @@ def get_options():
 
     parser.add_argument('-m', dest='model', required=True, type=str, help='Model path (should contain both model and tokenizer)')
 
-    parser.add_argument('-ms', dest='source', type=str, choices=['huggingface', 'modelscope', 'local'], default='huggingface', 
+    parser.add_argument('-ms', dest='source', type=str, choices=['huggingface', 'modelscope', 'local'], default='huggingface', help='Download source of the model')
 
     parser.add_argument('-f', dest='file', default=None, type=str, help='File contains sequences that need to be classified')
 
