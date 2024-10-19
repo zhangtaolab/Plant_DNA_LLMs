@@ -371,7 +371,7 @@ def get_options():
     parser.add_argument('-m', dest='model', required=True, type=str, help='Model path (should contain both model and tokenizer)')
 
     parser.add_argument('-ms', dest='source', type=str, choices=['huggingface', 'modelscope', 'local'], default='huggingface', help='Download source of the model')
-
+    
     parser.add_argument('-f', dest='file', default=None, type=str, help='File contains sequences that need to be classified')
 
     parser.add_argument('-s', dest='sequence', type=str, default=None, help='One sequence that need to be classified')
@@ -491,17 +491,16 @@ def main():
         outf = open(args.outfile, 'w')
 
     # define model source
-    if os.path.exists(args.model):
+    if path.exists(args.model):
         args.source = "local"
-        prefix = ""
+        from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
     else:
         if args.source == "huggingface":
-            prefix = "https://huggingface.co/"
+            from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
         elif args.source == "modelscope":
-            prefix = "https://modelscope.cn/models/"
+            from modelscope import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
         else:
-            prefix = "https://huggingface.co/"
-    args.model = prefix + args.model
+            from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
 
     config = AutoConfig.from_pretrained(args.model, from_pretrained=True)
     model_name = config._name_or_path
