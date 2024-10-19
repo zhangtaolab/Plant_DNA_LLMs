@@ -403,6 +403,7 @@ def evaluate_metrics(task):
 
 
 def train():
+    from transformers import TrainingArguments, Trainer, HfArgumentParser
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
@@ -417,7 +418,6 @@ def train():
             from modelscope import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         else:
             from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
-    from transformers import TrainingArguments, Trainer, HfArgumentParser
 
     # load tokenizer
     if not model_args.tokenizer_path:
