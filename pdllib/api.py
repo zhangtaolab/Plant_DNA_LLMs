@@ -21,14 +21,25 @@ def plant_llms_inference(model_path, sequence, source='huggingface', device='aut
     dict: A dictionary containing the prediction results.
           包含预测结果的字典。
     """
-    model = ModelInference(
-        model_path=model_path,
-        source=source,
-        device=device,
-        max_token=max_length
-    )
+    # 检查输入序列的有效性
+    # Check the validity of the input sequence
+    if not sequence or not isinstance(sequence, str):
+        return {"error": "Invalid sequence provided. Please provide a non-empty string."}
 
-    results = model.predict([sequence])
+    try:
+        model = ModelInference(
+            model_path=model_path,
+            source=source,
+            device=device,
+            max_token=max_length
+        )
+    except Exception as e:
+        return {"error": f"Failed to load model: {str(e)}"}
+
+    try:
+        results = model.predict([sequence])
+    except Exception as e:
+        return {"error": f"Prediction failed: {str(e)}"}
 
     if results:
         return results[0]
