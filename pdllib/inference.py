@@ -2,7 +2,11 @@ import torch
 from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
 from tqdm.auto import tqdm
 import time
-from .models import MambaSequenceClassification, MambaSequenceRegression
+try:
+    from .models import MambaSequenceClassification, MambaSequenceRegression
+    mamba_available = True
+except:
+    mamba_available = False
 from .utils import load_seqfile
 from .task_map import task_map
 
@@ -13,6 +17,7 @@ class ModelInference:
         self.model_path = model_path
         self.source = source
         self.device = self._get_device(device)
+        print(f"Using device: {self.device}")
         self.max_token = max_token
         self._load_model_and_tokenizer()
 
@@ -49,10 +54,13 @@ class ModelInference:
         # 根据模型名称选择加载的模型类型
         # Choose the model type to load based on the model name
         if "dnamamba" in self.model_name.lower():
-            if self.num_labels > 1:
-                self.model = MambaSequenceClassification.from_pretrained(self.model_path, num_classes=self.num_labels)
+            if mamba_available:
+                if self.num_labels > 1:
+                    self.model = MambaSequenceClassification.from_pretrained(self.model_path, num_classes=self.num_labels)
+                else:
+                    self.model = MambaSequenceRegression.from_pretrained(self.model_path)
             else:
-                self.model = MambaSequenceRegression.from_pretrained(self.model_path)
+                raise Exception("Mamba model is not installed or your device is not supported.")
         else:
             self.model = AutoModelForSequenceClassification.from_pretrained(
                 self.model_path,
@@ -86,7 +94,7 @@ class ModelInference:
                 results.append({'label': label, 'probability': {self.id2label[j]: p for j, p in enumerate(prob)}})
         else:
             predictions = logits.squeeze()
-            results = [{'label': pred.item(), 'probability': pred.item()} for pred in predictions]
+            results = [{'label': self.id2label[0], 'probability': predictions.item()}]
 
         return results
 
