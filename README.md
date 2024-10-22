@@ -86,7 +86,7 @@ Where `sequence` is the input sequence, and `label` is the corresponding label f
 
 We also provide several plant genomic datasets for fine-tuning on the [HuggingFace](https://huggingface.co/zhangtaolab) and [ModelScope](https://www.modelscope.cn/organization/zhangtaolab).
 
-* Here is the [pretrain models list](docs/pretrain_models_en.md)
+* Here is the [pretrain models list](docs/en/resources/pretrain_models.md)
 
 We use Plant DNAGPT model as example to fine-tune a model for active core promoter prediction.
 
@@ -152,7 +152,7 @@ Finally, wait for the progress bar completed, and the fine-tuned model will be s
 
 To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.
 
-* Here is the [finetune models list](docs/finetune_models_en.md)
+* Here is the [finetune models list](docs/en/resources/finetune_models.md)
 
 We use Plant DNAGPT model as example to predict active core promoter in plants.
 
@@ -334,4 +334,4 @@ After the inference progress bar is completed, see the output file `predict_resu
 
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 
-Please refer to [online prediction platform](docs/platforms_en.md)
+Please refer to [online prediction platform](docs/en/resources/platforms.md)
