@@ -20,6 +20,8 @@ plugins:
   - search:
       lang: en
 
+repo_url: https://github.com/zhangtaolab/Plant_DNA_LLMs
+
 nav:
   - Home: index.md
   - Getting Started:
