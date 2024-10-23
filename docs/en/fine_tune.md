@@ -50,23 +50,23 @@ python model_finetune.py \
 ```
 
 In this script:  
-1. `--model_name_or_path`: Path to the foundation model you downloaded
-2. `--train_data`: Path to the train dataset
-3. `--test_data`: Path to the test dataset, omit it if no test data available
-4. `--dev_data`: Path to the validation dataset, omit it if no validation data available
-5. `--train_task`: Determine the task type, should be classification, multi-classification or regression
-6. `--labels`: Set the labels for classification task, separated by `;`
-7. `--run_name`: Name of the fine-tuned model
-8. `--per_device_train_batch_size`: Batch size for training model
-9. `--per_device_eval_batch_size`: Batch size for evaluating model
-10. `--learning_rate`: Learning rate for training model
-11. `--num_train_epochs`: Epoch for training model (also you can train model with steps, then you should change the strategies for save, logging and evaluation)
-12. `--load_best_model_at_end`: Whether to load the model with the best performance on the evaluated data, default is `True`
-13. `--metric_for_best_model`: Use which metric to determine the best model, default is `loss`, can be `accuracy`, `precison`, `recall`, `f1` or `matthews_correlation` for classification task, and `r2` or `spearmanr` for regression task
-14. `--save_strategy`: Strategy for saving model, can be `epoch` or `steps`
-15. `--logging_strategy`: Strategy for logging training information, can be `epoch` or `steps`
-16. `--evaluation_strategy`: Strategy for evaluating model, can be `epoch` or `steps`
-17. `--output_dir`: Where to save the fine-tuned model
+1. `--model_name_or_path`: Path to the foundation model you downloaded  
+2. `--train_data`: Path to the train dataset  
+3. `--test_data`: Path to the test dataset, omit it if no test data available  
+4. `--dev_data`: Path to the validation dataset, omit it if no validation data available  
+5. `--train_task`: Determine the task type, should be classification, multi-classification or regression  
+6. `--labels`: Set the labels for classification task, separated by `;`  
+7. `--run_name`: Name of the fine-tuned model  
+8. `--per_device_train_batch_size`: Batch size for training model  
+9. `--per_device_eval_batch_size`: Batch size for evaluating model  
+10. `--learning_rate`: Learning rate for training model  
+11. `--num_train_epochs`: Epoch for training model (also you can train model with steps, then you should change the strategies for save, logging and evaluation)  
+12. `--load_best_model_at_end`: Whether to load the model with the best performance on the evaluated data, default is `True`  
+13. `--metric_for_best_model`: Use which metric to determine the best model, default is `loss`, can be `accuracy`, `precison`, `recall`, `f1` or `matthews_correlation` for classification task, and `r2` or `spearmanr` for regression task  
+14. `--save_strategy`: Strategy for saving model, can be `epoch` or `steps`  
+15. `--logging_strategy`: Strategy for logging training information, can be `epoch` or `steps`  
+16. `--evaluation_strategy`: Strategy for evaluating model, can be `epoch` or `steps`  
+17. `--output_dir`: Where to save the fine-tuned model  
 
 Detailed descriptions of the arguments can be referred [here](https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments).
 
