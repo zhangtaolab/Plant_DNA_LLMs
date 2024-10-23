@@ -1,3 +1,4 @@
+from os import path
 import torch
 from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
 from tqdm.auto import tqdm
@@ -63,10 +64,15 @@ class ModelInference:
         # Choose the model type to load based on the model name
         if "dnamamba" in self.model_name.lower():
             if mamba_available:
-                if self.num_labels > 1:
-                    self.model = MambaSequenceClassification.from_pretrained(self.model_path, num_classes=self.num_labels)
+                model = AutoModel.from_pretrained(self.model_path, trust_remote_code=True)
+                if path.exists(path.join(self.model_path, 'pytorch_model.bin')):
+                    model_path = self.model_path
                 else:
-                    self.model = MambaSequenceRegression.from_pretrained(self.model_path)
+                    model_path = config._name_or_path
+                if self.num_labels > 1:
+                    self.model = MambaSequenceClassification.from_pretrained(model_path, num_classes=self.num_labels)
+                else:
+                    self.model = MambaSequenceRegression.from_pretrained(model_path)
             else:
                 raise Exception("Mamba model is not installed or your device is not supported.")
         else:
