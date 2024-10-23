@@ -35,6 +35,6 @@ In this script:
 2. `-s`: Input DNA sequence, only nucleotide A, C, G, T, N are acceptable  
 3. `-f`: Input file that contain multiple sequences, one line for each sequence. If you want to keep more information, file with `,` of `\t` separator is acceptable, but a header contains `sequence` column must be specified.  
 4. `-ms`: Download the model from `huggingface` or `modelscope` if the model is not local. The format of model name is `zhangtaolab/model-name`, users can copy model name here:  
-![copy](imgs/huggingface_copy.png)
+![copy](resources/huggingface_copy.png)
 
 Output results contains the original sequence, input sequence length. If the task type is classification, predicted label and probability of each label will provide; If the task type is regression, a predicted score will provide.
