@@ -37,13 +37,13 @@ Also [Pytorch](https://pytorch.org/) (>=2.0) with corresponding CUDA version sho
 We recommend to use `pip` to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to [Official Website](https://pytorch.org/) for the detailed installation tutorial of pytorch.
 
 ```bash
-pip install 'torch<2.5' 
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
 ```
 
 If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.
 
 ```bash
-pip install 'torch<2.5' 
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
 ```
 
 Next install other required dependencies.
@@ -88,7 +88,7 @@ We also provide several plant genomic datasets for fine-tuning on the [HuggingFa
 
 * Here is the [pretrain models list](docs/en/resources/pretrain_models.md)
 
-We use Plant DNAGPT model as example to predict active core promoter.
+We use Plant DNAGPT model as example to fine-tune a model for active core promoter prediction.
 
 First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:
 
@@ -170,12 +170,13 @@ git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
 
 We provide a script named `model_inference.py` for model inference.  
 Here is an example that use the script to predict histone modification:
-```bash
-# (method 1) Directly input a sequence
-python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
-# (method 2) Provide a file contains multiple sequences to predict
-python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+```bash
+# (method 1) Inference with local model, directly input a sequence
+python model_inference.py -m ./plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+
+# (method 2) Inference with local model, provide a file contains multiple sequences to predict
+python model_inference.py -m ./plant-dnagpt-BPE-promoter -f ./plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
 
 # (method 3) Inference with an online model (Auto download the model trained by us from huggingface or modelscope)
 python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms huggingface -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
@@ -333,4 +334,4 @@ After the inference progress bar is completed, see the output file `predict_resu
 
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 
-Please refer to [online prediction platform](docs/platforms_en.md)
+Please refer to [online prediction platform](docs/en/resources/platforms.md)

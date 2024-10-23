@@ -8,4 +8,4 @@ scikit-learn
 torch
 tqdm
 transformers<4.43
-modelscope<=1.19.0
+modelscope<=1.19.1
