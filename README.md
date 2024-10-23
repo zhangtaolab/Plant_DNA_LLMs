@@ -50,7 +50,7 @@ Next install other required dependencies.
 ```bash
 git clone --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
 cd Plant_DNA_LLMs
-python3 -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 (Optional) If you want to train a [mamba](https://github.com/state-spaces/mamba) model, you need to install several extra dependencies, also you should have a Nvidia GPU.
@@ -208,7 +208,7 @@ First download a finetune model from Huggingface or ModelScope, here we use Plan
 # prepare a work directory
 mkdir LLM_inference
 cd LLM_inference
-git clone https://huggingface.co/models/zhangtaolab/plant-dnamamba-BPE-promoter
+git clone https://huggingface.co/zhangtaolab/plant-dnamamba-BPE-promoter
 ```
 
 Then download the corresponding dataset, and if users have their own data, users can also prepare a custom dataset based on the previously mentioned inference data format.
