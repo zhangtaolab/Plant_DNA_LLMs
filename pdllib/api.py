@@ -1,6 +1,7 @@
+import os
 from .inference import ModelInference
 
-def plant_llms_inference(model_path, sequence, source='huggingface', device='auto', max_length=512):
+def plant_llms_inference(model_path, seq_or_file, source='huggingface', device='auto', max_length=512):
     """
     Perform inference on a DNA sequence using a specified model.
     使用指定的模型对DNA序列进行推理。
@@ -8,8 +9,8 @@ def plant_llms_inference(model_path, sequence, source='huggingface', device='aut
     Args:
     model_path (str): Path or name of the model to use.
                       要使用的模型的路径或名称。
-    sequence (str): The DNA sequence to analyze.
-                    要分析的DNA序列。
+    seq_or_file (str): The DNA sequence or file contains sequences to analyze.
+                    要分析的DNA序列或文件。
     source (str): Source of the model (default: 'huggingface').
                   模型的来源（默认：'huggingface'）。
     device (str): Device to run inference on (default: 'auto').
@@ -23,7 +24,7 @@ def plant_llms_inference(model_path, sequence, source='huggingface', device='aut
     """
     # 检查输入序列的有效性
     # Check the validity of the input sequence
-    if not sequence or not isinstance(sequence, str):
+    if not seq_or_file or not isinstance(seq_or_file, str):
         return {"error": "Invalid sequence provided. Please provide a non-empty string."}
 
     try:
@@ -37,11 +38,16 @@ def plant_llms_inference(model_path, sequence, source='huggingface', device='aut
         return {"error": f"Failed to load model: {str(e)}"}
 
     try:
-        results = model.predict([sequence])
+        if os.path.exists(seq_or_file):
+            results = model.predict_file(seq_or_file)
+        else:
+            results = model.predict([seq_or_file])
+            if results:
+                results = results[0]
     except Exception as e:
         return {"error": f"Prediction failed: {str(e)}"}
 
     if results:
-        return results[0]
+        return results
     else:
         return {"error": "No prediction result"}

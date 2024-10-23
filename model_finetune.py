@@ -19,8 +19,8 @@ import sklearn
 import evaluate
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, \
-                         TrainingArguments, Trainer, HfArgumentParser
+from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification
+from transformers import TrainingArguments, Trainer, HfArgumentParser
 from datasets import Dataset, DatasetDict, load_dataset
 
 try:
@@ -409,14 +409,14 @@ def train():
     # define model source
     if os.path.exists(model_args.model_name_or_path):
         model_args.source = "local"
-        from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
+        from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
     else:
         if model_args.source == "huggingface":
-            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
         elif model_args.source == "modelscope":
-            from modelscope import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            from modelscope import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
         else:
-            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
 
     # load tokenizer
     if not model_args.tokenizer_path:
@@ -500,10 +500,16 @@ def train():
     # load model
     if num_labels:
         if 'mamba' in model_args.model_name_or_path.lower():
-            if num_labels == 1:
-                model = MambaSequenceRegression.from_pretrained(model_args.model_name_or_path)
+            if os.path.exists(model_args.model_name_or_path):
+                model_name_or_path = model_args.model_name_or_path
             else:
-                model = MambaSequenceClassification.from_pretrained(model_args.model_name_or_path,
+                config = AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
+                model = AutoModel.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
+                model_name_or_path = config._name_or_path
+            if num_labels == 1:
+                model = MambaSequenceRegression.from_pretrained(model_name_or_path)
+            else:
+                model = MambaSequenceClassification.from_pretrained(model_name_or_path,
                                                                     num_classes=num_labels)
         else:
             model = AutoModelForSequenceClassification.from_pretrained(
