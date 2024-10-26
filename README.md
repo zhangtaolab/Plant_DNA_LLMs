@@ -13,7 +13,7 @@
 
 ![demo](imgs/huggingface_demo.gif)
 
-Online prediction of other models and prediction tasks can be found [here](#online-prediction-platform).
+Online prediction of other models and prediction tasks can be found [here](docs/en/resources/platforms.md).
 
 ## 1. Environment
 
@@ -37,13 +37,13 @@ Also [Pytorch](https://pytorch.org/) (>=2.0) with corresponding CUDA version sho
 We recommend to use `pip` to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to [Official Website](https://pytorch.org/) for the detailed installation tutorial of pytorch.
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
+pip install 'torch<2.5'
 ```
 
 If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.
 
 ```bash
-pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
+pip install 'torch<2.5'
 ```
 
 Next install other required dependencies.
@@ -330,8 +330,34 @@ After the inference progress bar is completed, see the output file `predict_resu
 
 * The detailed usage is the same as the section [Inference](#3-inference).
 
+#### Inference with GUI
+
+For convience, we also allow users predicting locally with a GUI based on [Gradio](https://www.gradio.app/), a friendly web app for machine learning models.
+
+CPU inference can simply run the following command, then open the url `http://127.0.0.1:7860` in your browser, then you will see a GUI with several options for task prediction.  
+(plant DNAMamba models are not shown in the cpu image because CPU cannot infer these models)
+
+```bash
+docker run -p 7860:7860 --name gradio_cpu zhangtaolab/plant_llms_gradio:cpu
+```
+
+GPU-based inference requires users to install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) in advance.
+
+After the environment is prepared completely, run the following command, then open the url `http://127.0.0.1:7860` in your browser.
+
+```bash
+docker run --runtime=nvidia --gpus=all -p 7860:7860 --name gradio_gpu zhangtaolab/plant_llms_gradio:gpu
+```
+
 ### Online prediction platform
 
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 
 Please refer to [online prediction platform](docs/en/resources/platforms.md)
+
+
+### 5. Inference API for developers
+
+For developers who want to use our inference code in the Jupyter Notebook or other places, we developed a simple API package in the `pdllib`, which allows users directly call the inference function.
+
+Besides, we provide a Demo that shows the usage of our API, see [notebook/inference_demo.ipynb](notebook/inference_demo.ipynb).

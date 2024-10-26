@@ -1,0 +1,30 @@
+FROM nvidia/cuda:12.4.1-base-ubuntu22.04
+MAINTAINER ZhangtaoLab "chenlong@zhangtaolab.org"
+
+EXPOSE 7860
+
+RUN apt update
+RUN apt install -y git python3 python3-pip
+RUN python3 -m pip install --no-cache-dir --upgrade pip
+
+RUN python3 -m pip install --no-cache-dir transformers==4.41.2 tokenizers==0.19.1 modelscope==1.19.0 "gradio<6"
+
+# If set to nothing, will install the latest version
+ARG PYTORCH='2.3.0'
+
+RUN [ ${#PYTORCH} -gt 0 ] && VERSION='torch=='$PYTORCH'.*' ||  VERSION='torch'; python3 -m pip install --no-cache-dir -U $VERSION --extra-index-url https://download.pytorch.org/whl/cpu
+
+
+ENV RUN_USER=user \
+    RUN_UID=1234 \
+    RUN_GID=1234 \
+    RUN_HOME=/home/user
+
+RUN groupadd -r $RUN_USER -g $RUN_UID
+RUN useradd -u $RUN_UID -r -g $RUN_GID -d $RUN_HOME -c "LLMs user" $RUN_USER
+
+ADD ./app.py $RUN_HOME/app.py
+RUN chmod +x $RUN_HOME/app.py
+
+WORKDIR $RUN_HOME
+ENTRYPOINT ["python3","app.py"]
