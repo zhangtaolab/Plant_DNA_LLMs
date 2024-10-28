@@ -101,7 +101,7 @@ def run_inference(text, task, model, tokenizer_type, source, max_length=512):
 
     # 导出结果
     for result in results:
-        if TASK_MAP[task]["datatype"].endwith("regression"):
+        if TASK_MAP[task]["datatype"].endswith("regression"):
             return None, result['probability'].values()[0]
         else:
             return result['probability'], None

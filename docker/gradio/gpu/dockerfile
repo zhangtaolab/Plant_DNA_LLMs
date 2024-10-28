@@ -32,7 +32,7 @@ ADD ./app.py $RUN_HOME/app.py
 RUN chmod +x $RUN_HOME/app.py
 
 RUN git clone -b dev --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
-RUN ln -s Plant_DNA_LLMs/pdllib $RUN_HOME/pdllib
+RUN cp -r Plant_DNA_LLMs/pdllib $RUN_HOME/pdllib
 
 WORKDIR $RUN_HOME
 ENTRYPOINT ["python3","app.py"]
