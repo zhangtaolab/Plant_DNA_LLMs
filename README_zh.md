@@ -335,9 +335,40 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 * 脚本中其他参数的说明可以参考 [模型推理](#3-模型推理) 中的使用说明。
 
+#### 基于图形界面（GUI）进行推理
 
-### 在线预测平台
+为了方便用户使用，我们也构建了基于[Gradio](https://www.gradio.app/)（一个界面友好的web app）的推理图形界面，用于用户在自己的电脑上预测各类下游任务。
+
+同样地，针对用户本地设备是否有显卡，我们也提供了2个版本的docker镜像。对于基于CPU的图形界面推理，用户可以简单地通过运行以下命令，之后在浏览器中打开`http://127.0.0.1:7860`网页，即可看到带有多个可选参数的图形界面。  
+（需要注意的是，plant DNAMamba模型因为目前不支持CPU推理，所以未在CPU的docker镜像中展示）
+
+```bash
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run -p 7860:7860 -v ./cache:/root/.cache --name gradio_cpu cr.bioinfor.eu.org/zhangtaolab/plant_llms_gradio:cpu
+```
+
+当进行推理时，模型会自动下载到用户电脑的`llms_gradio/cache`目录中，可重复使用。
+
+基于GPU的图形界面模型推理需要用户提前安装好[Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)，请仔细根据官方说明安装配置好。
+
+环境配置好后，直接运行如下命令，之后在浏览器中打开`http://127.0.0.1:7860`网页即可。
+
+```bash
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run --gpus=all -p 7860:7860 -v ./cache:/root/.cache --name gradio_gpu cr.bioinfor.eu.org/zhangtaolab/plant_llms_gradio:gpu
+```
+
+#### 在线预测平台
 
 为了方便用户使用模型预测DNA分析任务，我们也提供了在线的预测平台。
 
 请参考：[在线预测列表](docs/platforms_zh.md)
+
+
+### 5. 适用于开发者的模型推理API
+
+对于需要使用我们的代码在Jupyter Notebook或其他地方进行推理的开发者，我们开发了一个名为`pdllib`简单的API包，支持通过简单的推理函数实现快速的模型测试。
+
+此外，我们也提供了一个基于Jupyter Notebook的[测试Demo](notebook/inference_demo.ipynb)，说明了我们的API如何使用。

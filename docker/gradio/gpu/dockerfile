@@ -5,7 +5,7 @@ RUN apt update
 RUN apt install -y git python3 python3-pip
 RUN python3 -m pip install --no-cache-dir --upgrade pip
 
-RUN python3 -m pip install --no-cache-dir transformers==4.41.2 tokenizers==0.19.1 modelscope==1.19.0
+RUN python3 -m pip install --no-cache-dir transformers==4.41.2 tokenizers==0.19.1 modelscope==1.19.2
 
 # If set to nothing, will install the latest version
 ARG PYTORCH='2.3.0'
@@ -28,9 +28,11 @@ ENV RUN_USER=user \
 RUN groupadd -r $RUN_USER -g $RUN_UID
 RUN useradd -u $RUN_UID -r -g $RUN_GID -d $RUN_HOME -c "LLMs user" $RUN_USER
 
-
 ADD ./app.py $RUN_HOME/app.py
 RUN chmod +x $RUN_HOME/app.py
+
+RUN git clone -b dev --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
+RUN ln -s Plant_DNA_LLMs/pdllib $RUN_HOME/pdllib
 
 WORKDIR $RUN_HOME
 ENTRYPOINT ["python3","app.py"]

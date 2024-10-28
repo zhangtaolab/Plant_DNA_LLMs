@@ -338,18 +338,24 @@ CPU inference can simply run the following command, then open the url `http://12
 (plant DNAMamba models are not shown in the cpu image because CPU cannot infer these models)
 
 ```bash
-docker run -p 7860:7860 --name gradio_cpu zhangtaolab/plant_llms_gradio:cpu
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run -p 7860:7860 -v ./cache:/root/.cache --name gradio_cpu zhangtaolab/plant_llms_gradio:cpu
 ```
+
+Models will be downloaded into the `llms_gradio/cache` folder in your computer during inference.
 
 GPU-based inference requires users to install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) in advance.
 
 After the environment is prepared completely, run the following command, then open the url `http://127.0.0.1:7860` in your browser.
 
 ```bash
-docker run --runtime=nvidia --gpus=all -p 7860:7860 --name gradio_gpu zhangtaolab/plant_llms_gradio:gpu
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run --gpus=all -p 7860:7860 -v ./cache:/root/.cache --name gradio_gpu zhangtaolab/plant_llms_gradio:gpu
 ```
 
-### Online prediction platform
+#### Online prediction platform
 
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 

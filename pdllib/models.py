@@ -11,6 +11,8 @@ try:
 except:
     mamba_available = False
 
+####################################################################################################
+
 if mamba_available:
     @dataclass
     class MambaConfig:
@@ -197,3 +199,12 @@ if mamba_available:
             model.load_state_dict(model_state_dict, strict=False)  # 加载状态字典
 
             return model  # 返回模型
+
+####################################################################################################
+
+# 指定模型列表、分词器类型列表和数据源列表
+base_model = ['plant-dnabert', 'plant-nucleotide-transformer',
+              'plant-dnagpt', 'plant-dnagemma', 'plant-dnamamba',
+              'dnabert2', 'nucleotide-transformer-v2-100m', 'agront-1b']
+tokenizer_type = ['BPE', '6mer', 'singlebase']
+data_source = ['huggingface','modelscope']
