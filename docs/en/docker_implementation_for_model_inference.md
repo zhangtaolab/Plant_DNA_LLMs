@@ -12,20 +12,20 @@ First download a finetune model from Huggingface or ModelScope, here we use Plan
 # prepare a work directory
 mkdir LLM_inference
 cd LLM_inference
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnamamba-BPE-promoter
+git clone https://huggingface.co/zhangtaolab/plant-dnamamba-BPE-promoter
 ```
 
 Then download the corresponding dataset, and if users have their own data, users can also prepare a custom dataset based on the previously mentioned inference data format.
 
 ```bash
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/datasets/zhangtaolab/plant-multi-species-core-promoters
 ```
 
 Once the model and dataset are ready, pull our model inference image from docker and test if it works.
 
 ```bash
 docker pull zhangtaolab/plant_llms_inference:gpu
-docker run --runtime=nvidia --gpus=all -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:gpu -h
+docker run --runtime=nvidia --gpus=all -v ./:/home/llms zhangtaolab/plant_llms_inference:gpu -h
 ```
 
 ```bash
@@ -77,20 +77,20 @@ First download a finetune model from Huggingface or ModelScope, here we use Plan
 # prepare a work directory
 mkdir LLM_inference
 cd LLM_inference
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE-promoter
 ```
 
 Then download the corresponding dataset, and if users have their own data, users can also prepare a custom dataset based on the previously mentioned inference data format.
 
 ```bash
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/datasets/zhangtaolab/plant-multi-species-core-promoters
 ```
 
 Once the model and dataset are ready, pull our model inference image from docker and test if it works.
 
 ```bash
 docker pull zhangtaolab/plant_llms_inference:cpu
-docker run -v /Local_path:/Path_in_container zhangtaolab/plant_llms_inference:cpu -h
+docker run -v ./:/home/llms zhangtaolab/plant_llms_inference:cpu -h
 ```
 
 ```bash
@@ -132,9 +132,34 @@ docker run -v ./:/home/llms zhangtaolab/plant_llms_inference:cpu -m /home/llms/p
 
 After the inference progress bar is completed, see the output file `predict_results.txt` in the current local directory, which saves the prediction results corresponding to each sequence in the input file.
 
-* The detailed usage is the same as the section [Inference](inference.md).
+* The detailed usage is the same as the section [Inference](#3-inference).
 
-### Online prediction platform
+#### Inference with GUI
+
+For convience, we also allow users predicting locally with a GUI based on [Gradio](https://www.gradio.app/), a friendly web app for machine learning models.
+
+CPU inference can simply run the following command, then open the url `http://127.0.0.1:7860` in your browser, then you will see a GUI with several options for task prediction.  
+(plant DNAMamba models are not shown in the cpu image because CPU cannot infer these models)
+
+```bash
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run -p 7860:7860 -v ./cache:/root/.cache --name gradio_cpu zhangtaolab/plant_llms_gradio:cpu
+```
+
+Models will be downloaded into the `llms_gradio/cache` folder in your computer during inference.
+
+GPU-based inference requires users to install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) in advance.
+
+After the environment is prepared completely, run the following command, then open the url `http://127.0.0.1:7860` in your browser.
+
+```bash
+mkdir -p llms_gradio/cache
+cd llms_gradio
+docker run --gpus=all -p 7860:7860 -v ./cache:/root/.cache --name gradio_gpu zhangtaolab/plant_llms_gradio:gpu
+```
+
+#### Online prediction platform
 
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 

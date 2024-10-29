@@ -12,7 +12,7 @@ We also provide several plant genomic datasets for fine-tuning on the [HuggingFa
 
 * Here is the [pretrain models list](resources/pretrain_models.md)
 
-We use Plant DNAGPT model as example to predict active core promoter.
+We use Plant DNAGPT model as example to fine-tune a model for active core promoter prediction.
 
 First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:
 
@@ -21,9 +21,9 @@ First download a pretrain model and corresponding dataset from HuggingFace or Mo
 mkdir LLM_finetune
 cd LLM_finetune
 # download pretrain model
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE
 # download train dataset
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
 ```
 
 After preparing the model and dataset, using the following script to finetune model (here is a promoter prediction example)
