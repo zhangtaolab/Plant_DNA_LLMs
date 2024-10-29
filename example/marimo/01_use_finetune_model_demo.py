@@ -8,7 +8,7 @@ app = marimo.App(width="medium")
 def __(__file__):
     import sys
     import os
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
     import marimo as mo
     from pdllib.api import plant_llms_inference
     return mo, os, plant_llms_inference, sys
