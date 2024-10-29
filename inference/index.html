@@ -141,6 +141,18 @@
 </div>
     
     
+      <div class="md-header__source">
+        <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
   </nav>
   
 </header>
@@ -184,7 +196,7 @@
         <a href="../environment/" class="md-tabs__link">
           
   
-  Getting started
+  Getting Started
 
         </a>
       </li>
@@ -202,7 +214,7 @@
         <a href="../resources/pretrain_models/" class="md-tabs__link">
           
   
-  resources
+  Resources
 
         </a>
       </li>
@@ -240,6 +252,18 @@
     </a>
     Plant DNA LLMs Docs
   </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
     
@@ -292,7 +316,7 @@
             
   
   <span class="md-ellipsis">
-    Getting started
+    Getting Started
   </span>
   
 
@@ -302,7 +326,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Getting started
+            Getting Started
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -398,6 +422,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_api_for_developers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Inference API for developers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -429,7 +474,7 @@
             
   
   <span class="md-ellipsis">
-    resources
+    Resources
   </span>
   
 
@@ -439,7 +484,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            resources
+            Resources
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -543,6 +588,9 @@
                 
                   
 
+  
+  
+
 
   <h1>Inference</h1>
 
@@ -550,18 +598,33 @@
 <ul>
 <li>Here is the <a href="../resources/finetune_models/">finetune models list</a></li>
 </ul>
-<p>We also provide a script named <code>model_inference.py</code> for model inference.<br />
+<p>We use Plant DNAGPT model as example to predict active core promoter in plants.</p>
+<p>First download a fine-tuned model and corresponding dataset from HuggingFace or ModelScope</p>
+<pre><code class="language-bash"># prepare a work directory
+mkdir LLM_inference
+cd LLM_inference
+# download fine-tuned model
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE-promoter
+# download train dataset
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
+</code></pre>
+<p>We provide a script named <code>model_inference.py</code> for model inference.<br />
 Here is an example that use the script to predict histone modification:</p>
-<pre><code class="language-bash"># (method 1) Directly input a sequence
-python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+<pre><code class="language-bash"># (method 1) Inference with local model, directly input a sequence
+python model_inference.py -m ./plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
-# (method 2) Provide a file contains multiple sequences to predict
-python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+# (method 2) Inference with local model, provide a file contains multiple sequences to predict
+python model_inference.py -m ./plant-dnagpt-BPE-promoter -f ./plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+
+# (method 3) Inference with an online model (Auto download the model trained by us from huggingface or modelscope)
+python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms huggingface -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
 </code></pre>
 <p>In this script:
 1. <code>-m</code>: Path to the fine-tuned model that is used for inference
 2. <code>-s</code>: Input DNA sequence, only nucleotide A, C, G, T, N are acceptable
-3. <code>-f</code>: Input file that contain multiple sequences, one line for each sequence. If you want to keep more information, file with <code>,</code> of <code>\t</code> separator is acceptable, but a header contains <code>sequence</code> column must be specified.</p>
+3. <code>-f</code>: Input file that contain multiple sequences, one line for each sequence. If you want to keep more information, file with <code>,</code> of <code>\t</code> separator is acceptable, but a header contains <code>sequence</code> column must be specified.
+4. <code>-ms</code>: Download the model from <code>huggingface</code> or <code>modelscope</code> if the model is not local. The format of model name is <code>zhangtaolab/model-name</code>, users can copy model name here:
+<img alt="copy" src="../resources/huggingface_copy.png" /></p>
 <p>Output results contains the original sequence, input sequence length. If the task type is classification, predicted label and probability of each label will provide; If the task type is regression, a predicted score will provide.</p>
 
 

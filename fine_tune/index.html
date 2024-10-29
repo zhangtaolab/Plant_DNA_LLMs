@@ -141,6 +141,18 @@
 </div>
     
     
+      <div class="md-header__source">
+        <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
   </nav>
   
 </header>
@@ -184,7 +196,7 @@
         <a href="../environment/" class="md-tabs__link">
           
   
-  Getting started
+  Getting Started
 
         </a>
       </li>
@@ -202,7 +214,7 @@
         <a href="../resources/pretrain_models/" class="md-tabs__link">
           
   
-  resources
+  Resources
 
         </a>
       </li>
@@ -240,6 +252,18 @@
     </a>
     Plant DNA LLMs Docs
   </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
     
@@ -292,7 +316,7 @@
             
   
   <span class="md-ellipsis">
-    Getting started
+    Getting Started
   </span>
   
 
@@ -302,7 +326,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Getting started
+            Getting Started
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -398,6 +422,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_api_for_developers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Inference API for developers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -429,7 +474,7 @@
             
   
   <span class="md-ellipsis">
-    resources
+    Resources
   </span>
   
 
@@ -439,7 +484,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            resources
+            Resources
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -543,6 +588,9 @@
                 
                   
 
+  
+  
+
 
   <h1>Fine tune</h1>
 
@@ -556,15 +604,15 @@
 <ul>
 <li>Here is the <a href="../resources/pretrain_models/">pretrain models list</a></li>
 </ul>
-<p>We use Plant DNAGPT model as example to predict active core promoter.</p>
+<p>We use Plant DNAGPT model as example to fine-tune a model for active core promoter prediction.</p>
 <p>First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:</p>
 <pre><code class="language-bash"># prepare a work directory
 mkdir LLM_finetune
 cd LLM_finetune
 # download pretrain model
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE
 # download train dataset
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
 </code></pre>
 <p>After preparing the model and dataset, using the following script to finetune model (here is a promoter prediction example)</p>
 <pre><code class="language-bash">python model_finetune.py \
@@ -587,23 +635,23 @@ git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-pr
     --output_dir plant-dnagpt-BPE-promoter
 </code></pre>
 <p>In this script:<br />
-1. <code>--model_name_or_path</code>: Path to the foundation model you downloaded
-2. <code>--train_data</code>: Path to the train dataset
-3. <code>--test_data</code>: Path to the test dataset, omit it if no test data available
-4. <code>--dev_data</code>: Path to the validation dataset, omit it if no validation data available
-5. <code>--train_task</code>: Determine the task type, should be classification, multi-classification or regression
-6. <code>--labels</code>: Set the labels for classification task, separated by <code>;</code>
-7. <code>--run_name</code>: Name of the fine-tuned model
-8. <code>--per_device_train_batch_size</code>: Batch size for training model
-9. <code>--per_device_eval_batch_size</code>: Batch size for evaluating model
-10. <code>--learning_rate</code>: Learning rate for training model
-11. <code>--num_train_epochs</code>: Epoch for training model (also you can train model with steps, then you should change the strategies for save, logging and evaluation)
-12. <code>--load_best_model_at_end</code>: Whether to load the model with the best performance on the evaluated data, default is <code>True</code>
-13. <code>--metric_for_best_model</code>: Use which metric to determine the best model, default is <code>loss</code>, can be <code>accuracy</code>, <code>precison</code>, <code>recall</code>, <code>f1</code> or <code>matthews_correlation</code> for classification task, and <code>r2</code> or <code>spearmanr</code> for regression task
-14. <code>--save_strategy</code>: Strategy for saving model, can be <code>epoch</code> or <code>steps</code>
-15. <code>--logging_strategy</code>: Strategy for logging training information, can be <code>epoch</code> or <code>steps</code>
-16. <code>--evaluation_strategy</code>: Strategy for evaluating model, can be <code>epoch</code> or <code>steps</code>
-17. <code>--output_dir</code>: Where to save the fine-tuned model</p>
+1. <code>--model_name_or_path</code>: Path to the foundation model you downloaded<br />
+2. <code>--train_data</code>: Path to the train dataset<br />
+3. <code>--test_data</code>: Path to the test dataset, omit it if no test data available<br />
+4. <code>--dev_data</code>: Path to the validation dataset, omit it if no validation data available<br />
+5. <code>--train_task</code>: Determine the task type, should be classification, multi-classification or regression<br />
+6. <code>--labels</code>: Set the labels for classification task, separated by <code>;</code><br />
+7. <code>--run_name</code>: Name of the fine-tuned model<br />
+8. <code>--per_device_train_batch_size</code>: Batch size for training model<br />
+9. <code>--per_device_eval_batch_size</code>: Batch size for evaluating model<br />
+10. <code>--learning_rate</code>: Learning rate for training model<br />
+11. <code>--num_train_epochs</code>: Epoch for training model (also you can train model with steps, then you should change the strategies for save, logging and evaluation)<br />
+12. <code>--load_best_model_at_end</code>: Whether to load the model with the best performance on the evaluated data, default is <code>True</code><br />
+13. <code>--metric_for_best_model</code>: Use which metric to determine the best model, default is <code>loss</code>, can be <code>accuracy</code>, <code>precison</code>, <code>recall</code>, <code>f1</code> or <code>matthews_correlation</code> for classification task, and <code>r2</code> or <code>spearmanr</code> for regression task<br />
+14. <code>--save_strategy</code>: Strategy for saving model, can be <code>epoch</code> or <code>steps</code><br />
+15. <code>--logging_strategy</code>: Strategy for logging training information, can be <code>epoch</code> or <code>steps</code><br />
+16. <code>--evaluation_strategy</code>: Strategy for evaluating model, can be <code>epoch</code> or <code>steps</code><br />
+17. <code>--output_dir</code>: Where to save the fine-tuned model  </p>
 <p>Detailed descriptions of the arguments can be referred <a href="https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments">here</a>.</p>
 <p>Finally, wait for the progress bar completed, and the fine-tuned model will be saved in the <code>plant-dnagpt-BPE-promoter</code> directory. In this directory, there will be a checkpoint directory, a runs directory, and a saved fine-tuning model.</p>
 

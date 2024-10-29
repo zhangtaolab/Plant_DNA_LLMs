@@ -146,6 +146,18 @@
 </div>
     
     
+      <div class="md-header__source">
+        <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
   </nav>
   
 </header>
@@ -189,7 +201,7 @@
         <a href="./" class="md-tabs__link">
           
   
-  Getting started
+  Getting Started
 
         </a>
       </li>
@@ -207,7 +219,7 @@
         <a href="../resources/pretrain_models/" class="md-tabs__link">
           
   
-  resources
+  Resources
 
         </a>
       </li>
@@ -245,6 +257,18 @@
     </a>
     Plant DNA LLMs Docs
   </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
     
@@ -297,7 +321,7 @@
             
   
   <span class="md-ellipsis">
-    Getting started
+    Getting Started
   </span>
   
 
@@ -307,7 +331,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Getting started
+            Getting Started
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -467,6 +491,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_api_for_developers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Inference API for developers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -498,7 +543,7 @@
             
   
   <span class="md-ellipsis">
-    resources
+    Resources
   </span>
   
 
@@ -508,7 +553,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            resources
+            Resources
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -656,6 +701,9 @@
                 
                   
 
+  
+  
+
 
   <h1>Environment</h1>
 
@@ -670,15 +718,15 @@ conda activate llms
 Install <a href="https://www.nvidia.com/download/index.aspx">Nvidia driver</a> and corresponding version of <a href="https://developer.nvidia.com/cuda-downloads">CUDA driver</a> (&gt; 11.0, we used CUDA 12.1).  </p>
 <p>Also <a href="https://pytorch.org/">Pytorch</a> (&gt;=2.0) with corresponding CUDA version should also install.<br />
 We recommend to use <code>pip</code> to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to <a href="https://pytorch.org/">Official Website</a> for the detailed installation tutorial of pytorch.</p>
-<pre><code class="language-bash">pip install 'torch&lt;2.4' --index-url https://download.pytorch.org/whl/cu121
+<pre><code class="language-bash">pip install 'torch&lt;2.5'
 </code></pre>
 <p>If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.</p>
-<pre><code class="language-bash">pip install 'torch&lt;2.4' --index-url https://download.pytorch.org/whl/cpu
+<pre><code class="language-bash">pip install 'torch&lt;2.5'
 </code></pre>
 <p>Next install other required dependencies.</p>
 <pre><code class="language-bash">git clone --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
 cd Plant_DNA_LLMs
-python3 -m pip install -r requirements.txt
+pip install -r requirements.txt
 </code></pre>
 <p>(Optional) If you want to train a <a href="https://github.com/state-spaces/mamba">mamba</a> model, you need to install several extra dependencies, also you should have a Nvidia GPU.</p>
 <pre><code class="language-bash">pip install 'causal-conv1d&lt;=1.3'

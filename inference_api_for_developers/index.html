@@ -9,20 +9,22 @@
       
       
       
+        <link rel="prev" href="../docker_implementation_for_model_inference/">
       
-        <link rel="next" href="environment/">
+      
+        <link rel="next" href="../resources/pretrain_models/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
     
     
       
-        <title>Plant DNA LLMs Docs</title>
+        <title>Inference API for developers - Plant DNA LLMs Docs</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
       
       
 
@@ -41,7 +43,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -59,11 +61,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#demo-for-plant-dna-llms-prediction" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -74,7 +71,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Plant DNA LLMs Docs" class="md-header__button md-logo" aria-label="Plant DNA LLMs Docs" data-md-component="logo">
+    <a href=".." title="Plant DNA LLMs Docs" class="md-header__button md-logo" aria-label="Plant DNA LLMs Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -94,7 +91,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Inference API for developers
             
           </span>
         </div>
@@ -173,11 +170,9 @@
         
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
         
   
     
@@ -192,11 +187,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="environment/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../environment/" class="md-tabs__link">
           
   
   Getting Started
@@ -214,7 +211,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="resources/pretrain_models/" class="md-tabs__link">
+        <a href="../resources/pretrain_models/" class="md-tabs__link">
           
   
   Resources
@@ -247,7 +244,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Plant DNA LLMs Docs" class="md-nav__button md-logo" aria-label="Plant DNA LLMs Docs" data-md-component="logo">
+    <a href=".." title="Plant DNA LLMs Docs" class="md-nav__button md-logo" aria-label="Plant DNA LLMs Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -274,28 +271,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Home
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -304,33 +283,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#demo-for-plant-dna-llms-prediction" class="md-nav__link">
-    <span class="md-ellipsis">
-      Demo for plant DNA LLMs prediction
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -339,23 +291,28 @@
       
   
   
+    
   
   
+  
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -366,7 +323,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -380,7 +337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="environment/" class="md-nav__link">
+      <a href="../environment/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -401,7 +358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fine_tune/" class="md-nav__link">
+      <a href="../fine_tune/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -422,7 +379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="inference/" class="md-nav__link">
+      <a href="../inference/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -443,7 +400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="docker_implementation_for_model_inference/" class="md-nav__link">
+      <a href="../docker_implementation_for_model_inference/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -461,10 +418,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="inference_api_for_developers/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -473,6 +437,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -530,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="resources/pretrain_models/" class="md-nav__link">
+      <a href="../resources/pretrain_models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -551,7 +516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="resources/finetune_models/" class="md-nav__link">
+      <a href="../resources/finetune_models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -572,7 +537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="resources/platforms/" class="md-nav__link">
+      <a href="../resources/platforms/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -611,23 +576,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#demo-for-plant-dna-llms-prediction" class="md-nav__link">
-    <span class="md-ellipsis">
-      Demo for plant DNA LLMs prediction
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -644,15 +592,10 @@
   
 
 
-<h1>
-  <p align="center">
-  Plant foundation DNA large language models (LLMs)
-  </p>
-</h1>
+  <h1>Inference API for developers</h1>
 
-<h2 id="demo-for-plant-dna-llms-prediction">Demo for plant DNA LLMs prediction</h2>
-<p><img alt="demo" src="resources/huggingface_demo.gif" /></p>
-<p>Online prediction of other models and prediction tasks can be found <a href="resources/platforms/">here</a>.</p>
+<p>For developers who want to use our inference code in the Jupyter Notebook or other places, we developed a simple API package in the <code>pdllib</code>, which allows users directly call the inference function.</p>
+<p>Besides, we provide a Demo that shows the usage of our API, see <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs/blob/main/notebook/inference_demo.ipynb">notebook/inference_demo.ipynb</a>.</p>
 
 
 
@@ -699,10 +642,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs"], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>
