@@ -11,7 +11,7 @@
 
 ## 0. Demo for plant DNA LLMs prediction
 
-![demo](imgs/huggingface_demo.gif)
+![demo](imgs/plantllm.gif)
 
 Online prediction of other models and prediction tasks can be found [here](#online-prediction-platform).
 

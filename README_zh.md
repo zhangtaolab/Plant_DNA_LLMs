@@ -14,7 +14,7 @@
 
 ## 0. 模型预测DEMO
 
-![demo](imgs/modelscope_demo.gif)
+![demo](imgs/plantllm.gif)
 
 其他模型和对应任务的在线预测可以在[这里](#online-prediction-platform)查看.
 
