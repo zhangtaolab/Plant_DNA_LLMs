@@ -8,4 +8,4 @@
 
 ![demo](resources/plantllm.gif)
 
-Online prediction of other models and prediction tasks can be found [here](resources/platforms.md).
+Online prediction of other models and prediction tasks can be found [here](https://finetune.plantllm.org/).
