@@ -13,7 +13,8 @@
 
 ![demo](imgs/plantllm.gif)
 
-Online prediction of other models and prediction tasks can be found [here](#online-prediction-platform).
+
+Online prediction of other models and prediction tasks can be found [here](https://finetune.plantllm.org/).
 
 ## 1. Environment
 
