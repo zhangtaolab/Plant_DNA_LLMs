@@ -16,7 +16,7 @@
 
 ![demo](imgs/plantllm.gif)
 
-其他模型和对应任务的在线预测可以在[这里](#online-prediction-platform)查看.
+其他模型和对应任务的在线预测可以在[这里](https://finetune.plantllm.org/)查看.
 
 ## 1. 环境配置
 
