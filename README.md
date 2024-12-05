@@ -1,6 +1,6 @@
 <h1>
   <p align="center">
-  PDLLMs: A model-box based on Plant DNA Large Language Models (LLMs)
+  PDLLMs: A group of tailored DNA large language models for analyzing plant genomes
   </p>
 </h1>
 
