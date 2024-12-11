@@ -336,3 +336,8 @@ After the inference progress bar is completed, see the output file `predict_resu
 In order to facilitate users to use the model to predict DNA analysis tasks, we also provide online prediction platforms.
 
 Please refer to [online prediction platform](docs/en/resources/platforms.md)
+
+
+### Citation
+
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.0066
