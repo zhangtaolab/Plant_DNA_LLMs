@@ -341,3 +341,8 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 为了方便用户使用模型预测DNA分析任务，我们也提供了在线的预测平台。
 
 请参考：[在线预测列表](docs/platforms_zh.md)
+
+
+### 引用
+
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.0066
