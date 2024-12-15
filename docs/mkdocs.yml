@@ -30,6 +30,7 @@ nav:
     - Inference: inference.md
     - 'Docker implementation for model inference': docker_implementation_for_model_inference.md
     - 'Inference API for developers': inference_api_for_developers.md
+    - 'Citation': citation.md
   - Resources:
     - 'Pretrain models': resources/pretrain_models.md
     - 'Fine tune models': resources/finetune_models.md
