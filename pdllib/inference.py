@@ -3,11 +3,11 @@ import torch
 from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
 from tqdm.auto import tqdm
 import time
-try:
-    from .models import MambaSequenceClassification, MambaSequenceRegression
-    mamba_available = True
-except:
-    mamba_available = False
+# try:
+#     from .models import MambaSequenceClassification, MambaSequenceRegression
+#     mamba_available = True
+# except:
+#     mamba_available = False
 from .utils import load_seqfile
 from .task_map import task_map
 
@@ -62,25 +62,25 @@ class ModelInference:
 
         # 根据模型名称选择加载的模型类型
         # Choose the model type to load based on the model name
-        if "dnamamba" in self.model_name.lower():
-            if mamba_available:
-                model = AutoModel.from_pretrained(self.model_path, trust_remote_code=True)
-                if path.exists(path.join(self.model_path, 'pytorch_model.bin')):
-                    model_path = self.model_path
-                else:
-                    model_path = config._name_or_path
-                if self.num_labels > 1:
-                    self.model = MambaSequenceClassification.from_pretrained(model_path, num_classes=self.num_labels)
-                else:
-                    self.model = MambaSequenceRegression.from_pretrained(model_path)
-            else:
-                raise Exception("Mamba model is not installed or your device is not supported.")
-        else:
-            self.model = AutoModelForSequenceClassification.from_pretrained(
-                self.model_path,
-                num_labels=self.num_labels,
-                trust_remote_code=True
-            )
+        # if "dnamamba" in self.model_name.lower():
+        #     if mamba_available:
+        #         model = AutoModel.from_pretrained(self.model_path, trust_remote_code=True)
+        #         if path.exists(path.join(self.model_path, 'pytorch_model.bin')):
+        #             model_path = self.model_path
+        #         else:
+        #             model_path = config._name_or_path
+        #         if self.num_labels > 1:
+        #             self.model = MambaSequenceClassification.from_pretrained(model_path, num_classes=self.num_labels)
+        #         else:
+        #             self.model = MambaSequenceRegression.from_pretrained(model_path)
+        #     else:
+        #         raise Exception("Mamba model is not installed or your device is not supported.")
+        # else:
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.model_path,
+            num_labels=self.num_labels,
+            trust_remote_code=True
+        )
 
         # 加载分词器并将模型移动到指定设备
         # Load the tokenizer and move the model to the specified device

@@ -2,34 +2,24 @@
 #! /usr/bin/env python
 
 import os
+# Uncomment this if you want to use specific directory for cache
+# os.environ['HF_HOME'] = '/mnt/data'
+# Uncomment these when P2P and InfiniBand are not available during training with multiple GPUs
 # os.environ['NCCL_P2P_DISABLE'] = '1'
 # os.environ['NCCL_IB_DISABLE'] = '1'
 
 import random
 import numpy as np
-import json
-import logging
-from collections import namedtuple
-from dataclasses import dataclass, field, asdict
-from typing import Optional, Dict, Sequence, Tuple, List
+from dataclasses import dataclass, field
+from typing import Optional, Dict, List
 from tqdm import tqdm
 
-from scipy.special import softmax
-import sklearn
-import evaluate
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TrainingArguments, Trainer, HfArgumentParser
 from datasets import Dataset, DatasetDict, load_dataset
 
-try:
-    from mamba_ssm.models.mixer_seq_simple import MambaLMHeadModel
-    from mamba_ssm.utils.hf import load_config_hf, load_state_dict_hf
-    mamba_available = True
-except:
-    mamba_available = False
-    print('Mamba-ssm is not installed on the machine, cannot run DNA Mamba momdel.')
 
 ############################################################
 ## Arguments ###############################################
@@ -72,9 +62,10 @@ class TrainingArguments(TrainingArguments):
     save_steps: Optional[int] = field(default=200)
     save_strategy: str = field(default='epoch'),
     eval_steps: Optional[int] = field(default=None)
-    evaluation_strategy: str = field(default='epoch'),
+    eval_strategy: str = field(default='epoch'),
     # eval_accumulation_steps: Optional[int] = field(default=None),
-    warmup_steps: int = field(default=50)
+    # warmup_steps: int = field(default=50)
+    warmup_ratio: float = field(default=0.05)
     weight_decay: float = field(default=0.01)
     learning_rate: float = field(default=1e-5)
     save_total_limit: int = field(default=5)
@@ -85,182 +76,9 @@ class TrainingArguments(TrainingArguments):
     dataloader_pin_memory: bool = field(default=False)
     seed: int = field(default=7)
 
-############################################################
 
 ############################################################
-## Mamba model configurations ##############################
-if mamba_available:
-
-    @dataclass
-    class MambaConfig:
-        d_model: int = 768
-        n_layer: int = 24
-        vocab_size: int = 8000
-        ssm_cfg: dict = field(default_factory=dict)
-        rms_norm: bool = True
-        residual_in_fp32: bool = True
-        fused_add_norm: bool = True
-        pad_vocab_size_multiple: int = 8
-        tie_embeddings: bool = True
-
-        def to_json_string(self):
-            return json.dumps(asdict(self))
-
-        def to_dict(self):
-            return asdict(self)
-
-
-    class MambaClassificationHead(nn.Module):
-        def __init__(self, d_model, num_classes, **kwargs):
-            super(MambaClassificationHead, self).__init__()
-            self.classification_head = nn.Linear(d_model, num_classes, **kwargs)
-
-        def forward(self, hidden_states):
-            return self.classification_head(hidden_states)
-
-
-    class MambaSequenceClassification(MambaLMHeadModel):
-        def __init__(
-            self,
-            config: MambaConfig,
-            initializer_cfg=None,
-            device=None,
-            dtype=None,
-            num_classes=2,
-        ) -> None:
-            super().__init__(config, initializer_cfg, device, dtype)
-
-            self.classification_head = MambaClassificationHead(d_model=config.d_model, num_classes=num_classes)
-
-            del self.lm_head
-
-        def forward(self, input_ids, attention_mask=None, labels=None):
-            hidden_states = self.backbone(input_ids)
-
-            mean_hidden_states = hidden_states.mean(dim=1)
-
-            logits = self.classification_head(mean_hidden_states)
-
-            if labels is None:
-                ClassificationOutput = namedtuple("ClassificationOutput", ["logits"])
-                return ClassificationOutput(logits=logits)
-            else:
-                ClassificationOutput = namedtuple("ClassificationOutput", ["loss", "logits"])
-
-            loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits, labels)
-
-            return ClassificationOutput(loss=loss, logits=logits)
-
-        def predict(self, text, tokenizer, id2label=None):
-            input_ids = torch.tensor(tokenizer(text)['input_ids'], device='cuda')[None]
-            with torch.no_grad():
-                logits = self.forward(input_ids).logits[0]
-                label = np.argmax(logits.cpu().numpy())
-
-            if id2label is not None:
-                return id2label[label]
-            else:
-                return label
-
-        @classmethod
-        def from_pretrained(cls, pretrained_model_name, device=None, dtype=None, num_classes=2, **kwargs):
-            config_data = load_config_hf(pretrained_model_name)
-            config = MambaConfig(**config_data)
-
-            model = cls(config, device=device, dtype=dtype, num_classes=num_classes, **kwargs)
-
-            model_state_dict = load_state_dict_hf(pretrained_model_name, device=device, dtype=dtype)
-            model.load_state_dict(model_state_dict, strict=False)
-
-            print("Newly initialized embedding:", set(model.state_dict().keys()) - set(model_state_dict.keys()))
-            return model
-
-
-    class MambaSequenceRegression(MambaLMHeadModel):
-        def __init__(
-            self,
-            config: MambaConfig,
-            initializer_cfg=None,
-            device=None,
-            dtype=None,
-        ) -> None:
-            super().__init__(config, initializer_cfg, device, dtype)
-
-            self.classification_head = MambaClassificationHead(d_model=config.d_model, num_classes=1)
-
-            del self.lm_head
-
-        def forward(self, input_ids, attention_mask=None, labels=None):
-            hidden_states = self.backbone(input_ids)
-
-            mean_hidden_states = hidden_states.mean(dim=1)
-
-            logits = self.classification_head(mean_hidden_states)
-
-            if labels is None:
-                ClassificationOutput = namedtuple("ClassificationOutput", ["logits"])
-                return ClassificationOutput(logits=logits)
-            else:
-                ClassificationOutput = namedtuple("ClassificationOutput", ["loss", "logits"])
-
-            loss_fct = nn.MSELoss()
-            loss = loss_fct(logits.squeeze(), labels.squeeze())
-
-            return ClassificationOutput(loss=loss, logits=logits)
-
-        def predict(self, text, tokenizer, id2label=None):
-            input_ids = torch.tensor(tokenizer(text)['input_ids'], device='cuda')[None]
-            with torch.no_grad():
-                logits = self.forward(input_ids).logits[0]
-                label = logits.cpu().numpy()
-
-            if id2label is not None:
-                return id2label[label]
-            else:
-                return label
-
-        @classmethod
-        def from_pretrained(cls, pretrained_model_name, device=None, dtype=None, **kwargs):
-            config_data = load_config_hf(pretrained_model_name)
-            config = MambaConfig(**config_data)
-
-            model = cls(config, device=device, dtype=dtype, **kwargs)
-
-            model_state_dict = load_state_dict_hf(pretrained_model_name, device=device, dtype=dtype)
-            model.load_state_dict(model_state_dict, strict=False)
-
-            print("Newly initialized embedding:", set(model.state_dict().keys()) - set(model_state_dict.keys()))
-            return model
-
-
-    class MambaTrainer(Trainer):
-
-        def compute_loss(self, model, inputs, return_outputs=False):
-            input_ids = inputs.pop("input_ids")
-            labels = inputs.pop('labels')
-
-            outputs = model(input_ids=input_ids, labels=labels)
-            loss = outputs.loss
-
-            return (loss, outputs) if return_outputs else loss
-
-        def save_model(self, output_dir = None, _internal_call = False):
-            if output_dir is None:
-                output_dir = self.args.output_dir
-
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
-
-            torch.save(self.model.state_dict(), f"{output_dir}/pytorch_model.bin")
-
-            self.tokenizer.save_pretrained(output_dir)
-
-            with open(f'{output_dir}/config.json', 'w') as f:
-                json.dump(self.model.config.to_dict(), f)
-
-############################################################
-
+## Functions ###############################################
 
 # Load data (fasta or csv format)
 def load_fasta_data(data, labels=None, data_type='', sample=1e8, seed=7):
@@ -309,98 +127,34 @@ def load_fasta_data(data, labels=None, data_type='', sample=1e8, seed=7):
 def seq2kmer(seqs, k):
     all_kmers = []
     for seq in seqs:
-        kmer = [seq[x:x+k] for x in range(len(seq)+1-k)]
+        kmer = [seq[x:x+k].upper() for x in range(len(seq)+1-k)]
         kmers = " ".join(kmer)
         all_kmers.append(kmers)
     return all_kmers
 
 
-# Define evaluation metrics
-def calculate_metric_with_sklearn(eval_pred):
-    logits, labels = eval_pred
-    if isinstance(logits, tuple):  # Unpack logits if it's a tuple
-        logits = logits[0]
-    if logits.ndim == 3:
-        # Reshape logits to 2D if needed
-        logits = logits.reshape(-1, logits.shape[-1])
-    predictions = np.argmax(logits, axis=-1)
-    valid_mask = labels != -100  # Exclude padding tokens (assuming -100 is the padding token ID)
-    valid_predictions = predictions[valid_mask]
-    valid_labels = labels[valid_mask]
-    print(valid_labels.shape, valid_predictions.shape)
-    return {
-        "accuracy": sklearn.metrics.accuracy_score(valid_labels, valid_predictions),
-        "f1": sklearn.metrics.f1_score(
-            valid_labels, valid_predictions, average="macro", zero_division=0
-        ),
-        "matthews_correlation": sklearn.metrics.matthews_corrcoef(
-            valid_labels, valid_predictions
-        ),
-        "precision": sklearn.metrics.precision_score(
-            valid_labels, valid_predictions, average="macro", zero_division=0
-        ),
-        "recall": sklearn.metrics.recall_score(
-            valid_labels, valid_predictions, average="macro", zero_division=0
-        ),
-    }
-
-
 def evaluate_metrics(task):
+    task = task.lower()
     if task == "regression":
-        # mse_metric = evaluate.load("evaluate/metrics/mse/mse.py")
-        r2_metric = evaluate.load("evaluate/metrics/r_squared/r_squared.py")
-        spm_metric = evaluate.load("evaluate/metrics/spearmanr/spearmanr.py")
-
-        def compute_metrics(eval_pred):
-            logits, labels = eval_pred
-
-            r2 = r2_metric.compute(references=labels, predictions=logits)
-            spearman = spm_metric.compute(references=labels, predictions=logits)
-
-            return {"r2": r2, "spearmanr": spearman['spearmanr']}
+        from pdllib.metrics import regression_metrics
+        compute_metrics = regression_metrics()
 
     elif task == "multi-classification":
-        metric1 = evaluate.load("evaluate/metrics/precision/precision.py")
-        metric2 = evaluate.load("evaluate/metrics/recall/recall.py")
-        metric3 = evaluate.load("evaluate/metrics/f1/f1.py")
-        metric4 = evaluate.load("evaluate/metrics/matthews_correlation/matthews_correlation.py")
-        roc_metric = evaluate.load("evaluate/metrics/roc_auc/roc_auc.py", "multiclass")
+        from pdllib.metrics import multi_classification_metrics
+        compute_metrics = multi_classification_metrics()
 
-        def compute_metrics(eval_pred):
-            logits, labels = eval_pred
-            logits = logits[0] if isinstance(logits, tuple) else logits
-            # predictions = np.argmax(logits, axis=-1)
-            pred_probs = softmax(logits, axis=1)
-            predictions = [x.tolist().index(max(x)) for x in pred_probs]
-
-            precision = metric1.compute(predictions=predictions, references=labels, average="micro")
-            recall = metric2.compute(predictions=predictions, references=labels, average="micro")
-            f1 = metric3.compute(predictions=predictions, references=labels, average="micro")
-            mcc = metric4.compute(predictions=predictions, references=labels)
-            roc_auc_ovr = roc_metric.compute(references=labels,
-                                            prediction_scores=pred_probs,
-                                            multi_class='ovr')
-            roc_auc_ovo = roc_metric.compute(references=labels,
-                                            prediction_scores=pred_probs,
-                                            multi_class='ovo')
-
-            return {**precision, **recall, **f1, **mcc, "AUROC_ovr": roc_auc_ovr['roc_auc'], "AUROC_ovo": roc_auc_ovo['roc_auc']}
-
+    elif task.startswith("multi-label"):
+        from pdllib.metrics import multi_labels_metrics
+        compute_metrics = multi_labels_metrics()
     else:
-        clf_metrics = evaluate.combine(["evaluate/metrics/accuracy/accuracy.py",
-                                        "evaluate/metrics/f1/f1.py",
-                                        "evaluate/metrics/precision/precision.py",
-                                        "evaluate/metrics/recall/recall.py",
-                                        "evaluate/metrics/matthews_correlation/matthews_correlation.py"])
-
-        def compute_metrics(eval_pred):
-            logits, labels = eval_pred
-            logits = logits[0] if isinstance(logits, tuple) else logits
-            predictions = np.argmax(logits, axis=-1)
-            return clf_metrics.compute(predictions=predictions, references=labels)
+        from pdllib.metrics import classification_metrics
+        compute_metrics = classification_metrics()
 
     return compute_metrics
 
+
+############################################################
+## Trainer ###############################################
 
 def train():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
@@ -409,14 +163,15 @@ def train():
     # define model source
     if os.path.exists(model_args.model_name_or_path):
         model_args.source = "local"
-        from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
+        from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
     else:
         if model_args.source == "huggingface":
-            from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         elif model_args.source == "modelscope":
-            from modelscope import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            from modelscope import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
         else:
-            from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForSequenceClassification, AutoModelForTokenClassification
+            print("Unknown Source type, using Hugging Face transformers library.")
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification
 
     # load tokenizer
     if not model_args.tokenizer_path:
@@ -474,9 +229,10 @@ def train():
         else:
             dataset = DatasetDict({'train': train_ds})
 
-
     # check the training task
     if model_args.train_task.lower().endswith("classification"):
+        num_labels = len(labels)
+    elif model_args.train_task.lower().startswith("multi-label"):
         num_labels = len(labels)
     elif model_args.train_task.lower() == "regression":
         num_labels = 1
@@ -491,7 +247,8 @@ def train():
                                       max_length=training_args.model_max_length)
             return tokenized_seq
         else:
-            return tokenizer(example['sequence'], truncation=True, padding='max_length',
+            return tokenizer([x.upper() for x in example['sequence']],
+                             truncation=True, padding='max_length',
                              max_length=training_args.model_max_length)
 
     dataset = dataset.map(encode, batched=True)
@@ -499,18 +256,16 @@ def train():
 
     # load model
     if num_labels:
-        if 'mamba' in model_args.model_name_or_path.lower():
-            if os.path.exists(model_args.model_name_or_path):
-                model_name_or_path = model_args.model_name_or_path
-            else:
-                config = AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
-                model = AutoModel.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
-                model_name_or_path = config._name_or_path
-            if num_labels == 1:
-                model = MambaSequenceRegression.from_pretrained(model_name_or_path)
-            else:
-                model = MambaSequenceClassification.from_pretrained(model_name_or_path,
-                                                                    num_classes=num_labels)
+        if model_args.train_task.lower().startswith("multi-label"):
+            model = AutoModelForSequenceClassification.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir,
+                num_labels=num_labels,
+                id2label=id2label,
+                label2id=label2id,
+                problem_type="multi_label_classification",
+                trust_remote_code=True
+            )
         else:
             model = AutoModelForSequenceClassification.from_pretrained(
                 model_args.model_name_or_path,
@@ -529,7 +284,7 @@ def train():
     # in case token_id is different
     model.config.pad_token_id = tokenizer.pad_token_id
     if model.config.vocab_size < len(tokenizer):
-        print(len(tokenizer))
+        print('Update tokenizer length:', len(tokenizer))
         model.resize_token_embeddings(len(tokenizer))
 
     # define computer_metrics
@@ -537,53 +292,8 @@ def train():
 
     # define trainer
     if ('DNABERT-2' in model_args.model_name_or_path) or ('dnabert2' in model_args.model_name_or_path.lower()):
-        r2_metric = evaluate.load("evaluate/metrics/r_squared/r_squared.py")
-        spm_metric = evaluate.load("evaluate/metrics/spearmanr/spearmanr.py")
-        clf_metrics = evaluate.combine(["evaluate/metrics/accuracy/accuracy.py",
-                                        "evaluate/metrics/f1/f1.py",
-                                        "evaluate/metrics/precision/precision.py",
-                                        "evaluate/metrics/recall/recall.py",
-                                        "evaluate/metrics/matthews_correlation/matthews_correlation.py"])
-        metric1 = evaluate.load("evaluate/metrics/precision/precision.py")
-        metric2 = evaluate.load("evaluate/metrics/recall/recall.py")
-        metric3 = evaluate.load("evaluate/metrics/f1/f1.py")
-        metric4 = evaluate.load("evaluate/metrics/matthews_correlation/matthews_correlation.py")
-        roc_metric = evaluate.load("evaluate/metrics/roc_auc/roc_auc.py", "multiclass")
-
-        def compute_metrics(eval_pred):
-            logits, labels = eval_pred
-            # print(labels.shape, logits[0].shape)
-            if model_args.train_task.lower() == "regression":
-                r2 = r2_metric.compute(references=labels, predictions=logits[0])
-                spearman = spm_metric.compute(references=labels, predictions=logits[0])
-                return {"r2": r2, "spearmanr": spearman['spearmanr']}
-            else:
-                if model_args.train_task.lower() == "classification":
-                    predictions = torch.argmax(torch.from_numpy(logits[0]), dim=-1)
-                    return clf_metrics.compute(predictions=predictions, references=labels)
-                else:
-                    pred_probs = softmax(logits[0], axis=1)
-                    predictions = [x.tolist().index(max(x)) for x in pred_probs]
-                    precision = metric1.compute(predictions=predictions, references=labels, average="micro")
-                    recall = metric2.compute(predictions=predictions, references=labels, average="micro")
-                    f1 = metric3.compute(predictions=predictions, references=labels, average="micro")
-                    mcc = metric4.compute(predictions=predictions, references=labels)
-                    roc_auc_ovr = roc_metric.compute(references=labels,
-                                            prediction_scores=pred_probs,
-                                            multi_class='ovr')
-                    roc_auc_ovo = roc_metric.compute(references=labels,
-                                            prediction_scores=pred_probs,
-                                            multi_class='ovo')
-                    return {**precision, **recall, **f1, **mcc, "AUROC_ovr": roc_auc_ovr['roc_auc'], "AUROC_ovo": roc_auc_ovo['roc_auc']}
-
-        def preprocess_logits_for_metrics(logits, labels):
-            """
-            Original Trainer may have a memory leak.
-            This is a workaround to avoid storing too many tensors that are not needed.
-            """
-            logits = logits[0] if isinstance(logits, tuple) else logits
-            # pred_ids = torch.argmax(logits, dim=-1)
-            return logits, labels
+        from pdllib.metrics import metrics_for_dnabert2
+        compute_metrics, preprocess_logits_for_metrics = metrics_for_dnabert2(model_args.train_task)
 
         trainer = Trainer(model=model, tokenizer=tokenizer,
                           args=training_args,
@@ -591,14 +301,6 @@ def train():
                           eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
                           compute_metrics=compute_metrics,
                           preprocess_logits_for_metrics=preprocess_logits_for_metrics)
-    elif 'mamba' in model_args.model_name_or_path.lower():
-        trainer = MambaTrainer(
-                  model=model,
-                  tokenizer=tokenizer,
-                  args=training_args,
-                  train_dataset=dataset["train"],
-                  eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
-                  compute_metrics=compute_metrics)
     else:
         trainer = Trainer(model=model, tokenizer=tokenizer,
                           args=training_args,
