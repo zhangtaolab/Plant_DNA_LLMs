@@ -344,7 +344,7 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 为了方便用户使用模型预测DNA分析任务，我们也提供了在线的预测平台。
 
-请参考：[在线预测列表](docs/platforms_zh.md)
+请参考：[在线预测列表](docs/zh/platforms_zh.md)
 
 
 ### 引用
