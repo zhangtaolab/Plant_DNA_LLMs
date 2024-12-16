@@ -12,6 +12,10 @@
   <a href="README.md" target="_blank"><b>English</b></a>
 </p>
 
+### 论文引用
+
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.0066
+
 ## 0. 模型预测DEMO
 
 ![demo](imgs/plantllm.gif)
