@@ -99,7 +99,7 @@ mkdir finetune
 # download pretrain model
 git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # download train dataset
-git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+git clone https://huggingface.co/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
 ```
 
 * Note: If downloading from huggingface encounters network error, please try to download model/dataset from ModelScope or change to the accelerate mirror before downloading.
@@ -173,7 +173,7 @@ mkdir inference
 # download fine-tuned model
 git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE-promoter models/plant-dnagpt-BPE-promoter
 # download train dataset
-git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+git clone https://huggingface.co/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
 ```
 
 We provide a script named `model_inference.py` for model inference.  
