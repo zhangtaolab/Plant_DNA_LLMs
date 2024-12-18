@@ -728,7 +728,7 @@
 
   <h1>Environment</h1>
 
-<p><a href="https://docs.anaconda.com/free/anaconda/install/">Anaconda</a> package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.</p>
+<p><a href="https://www.anaconda.com/">Anaconda</a> package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.</p>
 <h4 id="11-download-and-install-anaconda-package-manager">1.1 Download and install <a href="https://www.anaconda.com/download">Anaconda</a> package manager</h4>
 <h4 id="12-create-environment-we-trained-the-models-with-python-311">1.2 Create environment (We trained the models with python 3.11)</h4>
 <pre><code class="language-bash">conda create -n llms python=3.11
@@ -739,10 +739,10 @@ conda activate llms
 Install <a href="https://www.nvidia.com/download/index.aspx">Nvidia driver</a> and corresponding version of <a href="https://developer.nvidia.com/cuda-downloads">CUDA driver</a> (&gt; 11.0, we used CUDA 12.1).  </p>
 <p>Also <a href="https://pytorch.org/">Pytorch</a> (&gt;=2.0) with corresponding CUDA version should also install.<br />
 We recommend to use <code>pip</code> to install python packages that needed. Please be sure to install the corresponding CUDA and Torch versions carefully, the CUDA version used in this test environment is 12.1. Please refer to <a href="https://pytorch.org/">Official Website</a> for the detailed installation tutorial of pytorch.</p>
-<pre><code class="language-bash">pip install 'torch&lt;2.5'
+<pre><code class="language-bash">pip install 'torch&lt;2.4'
 </code></pre>
 <p>If you just want to use models for inference (prediction), you can install Pytorch GPU version (above) or install Pytorch CPU version if your machine has no Nvidia GPU.</p>
-<pre><code class="language-bash">pip install 'torch&lt;2.5'
+<pre><code class="language-bash">pip install 'torch&lt;2.4'
 </code></pre>
 <p>Next install other required dependencies.</p>
 <pre><code class="language-bash">git clone --recursive https://github.com/zhangtaolab/Plant_DNA_LLMs
