@@ -9,10 +9,6 @@
   <a href="README_zh.md" target="_blank"><b>简体中文</b></a>
 </p>
 
-### Citation
-
-* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
-
 ## 0. Demo for plant DNA LLMs prediction
 
 ![demo](imgs/plantllm.gif)
@@ -98,23 +94,31 @@ We use Plant DNAGPT model as example to fine-tune a model for active core promot
 First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:
 
 ```bash
-# prepare a work directory
-mkdir LLM_finetune
-cd LLM_finetune
+# prepare a output directory
+mkdir finetune
 # download pretrain model
-git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # download train dataset
-git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+```
+
+* Note: If downloading from huggingface encounters network error, please try to download model/dataset from ModelScope or change to the accelerate mirror before downloading.
+```bash
+# Download with git
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# Download with huggingface-cli
+export HF_ENDPOINT="https://hf-mirror.com"
+huggingface-cli download [organization_name/repo_name]
 ```
 
 After preparing the model and dataset, using the following script to finetune model (here is a promoter prediction example)
 
 ```bash
 python model_finetune.py \
-    --model_name_or_path plant-dnagpt-BPE \
-    --train_data plant-multi-species-core-promoters/train.csv \
-    --test_data plant-multi-species-core-promoters/test.csv \
-    --eval_data plant-multi-species-core-promoters/dev.csv \
+    --model_name_or_path models/plant-dnagpt-BPE \
+    --train_data data/plant-multi-species-core-promoters/train.csv \
+    --test_data data/plant-multi-species-core-promoters/test.csv \
+    --eval_data data/plant-multi-species-core-promoters/dev.csv \
     --train_task classification \
     --labels 'Not promoter;Core promoter' \
     --run_name plant_dnagpt_BPE_promoter \
@@ -127,7 +131,7 @@ python model_finetune.py \
     --save_strategy epoch \
     --logging_strategy epoch \
     --evaluation_strategy epoch \
-    --output_dir plant-dnagpt-BPE-promoter
+    --output_dir finetune/plant-dnagpt-BPE-promoter
 ```
 
 In this script:  
@@ -165,12 +169,11 @@ First download a fine-tuned model and corresponding dataset from HuggingFace or 
 
 ```bash
 # prepare a work directory
-mkdir LLM_inference
-cd LLM_inference
+mkdir inference
 # download fine-tuned model
-git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE-promoter
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE-promoter models/plant-dnagpt-BPE-promoter
 # download train dataset
-git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
 ```
 
 We provide a script named `model_inference.py` for model inference.  
@@ -178,10 +181,10 @@ Here is an example that use the script to predict histone modification:
 
 ```bash
 # (method 1) Inference with local model, directly input a sequence
-python model_inference.py -m ./plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
 # (method 2) Inference with local model, provide a file contains multiple sequences to predict
-python model_inference.py -m ./plant-dnagpt-BPE-promoter -f ./plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -f data/plant-multi-species-core-promoters/test.csv -o inference/promoter_predict_results.txt
 
 # (method 3) Inference with an online model (Auto download the model trained by us from huggingface or modelscope)
 python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms huggingface -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
@@ -344,4 +347,4 @@ Please refer to [online prediction platform](docs/en/resources/platforms.md)
 
 ### Citation
 
-* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.0066

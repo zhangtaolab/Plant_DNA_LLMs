@@ -7,6 +7,8 @@ import os
 # Uncomment these when P2P and InfiniBand are not available during training with multiple GPUs
 # os.environ['NCCL_P2P_DISABLE'] = '1'
 # os.environ['NCCL_IB_DISABLE'] = '1'
+# Uncomment this to use the accelerate mirror for Hugging Face downloads
+# os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 
 import random
 import numpy as np

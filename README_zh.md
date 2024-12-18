@@ -12,10 +12,6 @@
   <a href="README.md" target="_blank"><b>English</b></a>
 </p>
 
-### 论文引用
-
-* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
-
 ## 0. 模型预测DEMO
 
 ![demo](imgs/plantllm.gif)
@@ -101,22 +97,30 @@ sequence,label
 
 ```bash
 # 准备一个工作目录
-mkdir LLM_finetune
-cd LLM_finetune
+mkdir finetune
 # 下载预训练模型
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # 下载训练数据集
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+```
+
+* 如果从Huggingface下载遇到网络错误，请尝试从modelscope下载或者更换加速镜像。
+```bash
+# 使用Git下载
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# 使用huggingface-cli下载
+export HF_ENDPOINT="https://hf-mirror.com"
+huggingface-cli download [organization_name/repo_name]
 ```
 
 模型文件和训练数据准备好后，可以使用如下命令微调模型（这里以预测启动子任务为例）：
 
 ```bash
 python model_finetune.py \
-    --model_name_or_path plant-dnagpt-BPE \
-    --train_data plant-multi-species-core-promoters/train.csv \
-    --test_data plant-multi-species-core-promoters/test.csv \
-    --eval_data plant-multi-species-core-promoters/dev.csv \
+    --model_name_or_path models/plant-dnagpt-BPE \
+    --train_data data/plant-multi-species-core-promoters/train.csv \
+    --test_data data/plant-multi-species-core-promoters/test.csv \
+    --eval_data data/plant-multi-species-core-promoters/dev.csv \
     --train_task classification \
     --labels 'Not promoter;Core promoter' \
     --run_name plant_dnagpt_BPE_promoter \
@@ -129,7 +133,7 @@ python model_finetune.py \
     --save_strategy epoch \
     --logging_strategy epoch \
     --evaluation_strategy epoch \
-    --output_dir plant-dnagpt-BPE-promoter
+    --output_dir finetune/plant-dnagpt-BPE-promoter
 ```
 
 以上的命令中，不同参数的介绍如下：  
@@ -167,22 +171,21 @@ python model_finetune.py \
 
 ```bash
 # 准备一个工作目录
-mkdir LLM_inference
-cd LLM_inference
+mkdir inference
 # 下载预训练模型
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter models/plant-dnagpt-BPE-promoter
 # 下载训练数据集
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
 ```
 
 我们同样提供了模型推理的脚本 `model_inference.py` ，下面是预测植物活性启动子的例子：
 
 ```bash
 # （方法1）使用本地模型推理（直接输入序列）
-python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
 # （方法2）使用本地模型推理（提供一个包含多条待预测序列的文件用于推理）
-python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -f data/plant-multi-species-core-promoters/test.csv -o inference/promoter_predict_results.txt
 
 # （方法3）使用在线下载的模型进行推理（直接从modelscope或huggingface读取我们训练的模型，不从本地读取）
 python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms modelscope -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
@@ -344,9 +347,9 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 为了方便用户使用模型预测DNA分析任务，我们也提供了在线的预测平台。
 
-请参考：[在线预测列表](docs/zh/platforms_zh.md)
+请参考：[在线预测列表](docs/platforms_zh.md)
 
 
 ### 引用
 
-* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.0066
