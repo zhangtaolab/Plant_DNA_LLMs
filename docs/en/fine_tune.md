@@ -17,13 +17,21 @@ We use Plant DNAGPT model as example to fine-tune a model for active core promot
 First download a pretrain model and corresponding dataset from HuggingFace or ModelScope:
 
 ```bash
-# prepare a work directory
-mkdir LLM_finetune
-cd LLM_finetune
+# prepare a output directory
+mkdir finetune
 # download pretrain model
-git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # download train dataset
-git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters
+git clone https://huggingface.co/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+```
+
+* Note: If downloading from huggingface encounters network error, please try to download model/dataset from ModelScope or change to the accelerate mirror before downloading.
+```bash
+# Download with git
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# Download with huggingface-cli
+export HF_ENDPOINT="https://hf-mirror.com"
+huggingface-cli download [organization_name/repo_name]
 ```
 
 After preparing the model and dataset, using the following script to finetune model (here is a promoter prediction example)
