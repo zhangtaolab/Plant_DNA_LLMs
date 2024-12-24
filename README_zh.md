@@ -14,9 +14,9 @@
 
 ## 0. 模型预测DEMO
 
-![demo](imgs/modelscope_demo.gif)
+![demo](imgs/plantllm.gif)
 
-其他模型和对应任务的在线预测可以在[这里](#online-prediction-platform)查看.
+其他模型和对应任务的在线预测可以在[这里](https://finetune.plantllm.org/)查看.
 
 ## 1. 环境配置
 
@@ -97,22 +97,30 @@ sequence,label
 
 ```bash
 # 准备一个工作目录
-mkdir LLM_finetune
-cd LLM_finetune
+mkdir finetune
 # 下载预训练模型
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # 下载训练数据集
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
+```
+
+* 如果从Huggingface下载遇到网络错误，请尝试从modelscope下载或者更换加速镜像。
+```bash
+# 使用Git下载
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# 使用huggingface-cli下载
+export HF_ENDPOINT="https://hf-mirror.com"
+huggingface-cli download [organization_name/repo_name]
 ```
 
 模型文件和训练数据准备好后，可以使用如下命令微调模型（这里以预测启动子任务为例）：
 
 ```bash
 python model_finetune.py \
-    --model_name_or_path plant-dnagpt-BPE \
-    --train_data plant-multi-species-core-promoters/train.csv \
-    --test_data plant-multi-species-core-promoters/test.csv \
-    --eval_data plant-multi-species-core-promoters/dev.csv \
+    --model_name_or_path models/plant-dnagpt-BPE \
+    --train_data data/plant-multi-species-core-promoters/train.csv \
+    --test_data data/plant-multi-species-core-promoters/test.csv \
+    --eval_data data/plant-multi-species-core-promoters/dev.csv \
     --train_task classification \
     --labels 'Not promoter;Core promoter' \
     --run_name plant_dnagpt_BPE_promoter \
@@ -125,7 +133,7 @@ python model_finetune.py \
     --save_strategy epoch \
     --logging_strategy epoch \
     --evaluation_strategy epoch \
-    --output_dir plant-dnagpt-BPE-promoter
+    --output_dir finetune/plant-dnagpt-BPE-promoter
 ```
 
 以上的命令中，不同参数的介绍如下：  
@@ -163,22 +171,21 @@ python model_finetune.py \
 
 ```bash
 # 准备一个工作目录
-mkdir LLM_inference
-cd LLM_inference
+mkdir inference
 # 下载预训练模型
-git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE-promoter models/plant-dnagpt-BPE-promoter
 # 下载训练数据集
-git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters
+git clone https://modelscope.cn/datasets/zhangtaolab/plant-multi-species-core-promoters data/plant-multi-species-core-promoters
 ```
 
 我们同样提供了模型推理的脚本 `model_inference.py` ，下面是预测植物活性启动子的例子：
 
 ```bash
 # （方法1）使用本地模型推理（直接输入序列）
-python model_inference.py -m plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -s 'TTACTAAATTTATAACGATTTTTTATCTAACTTTAGCTCATCAATCTTTACCGTGTCAAAATTTAGTGCCAAGAAGCAGACATGGCCCGATGATCTTTTACCCTGTTTTCATAGCTCGCGAGCCGCGACCTGTGTCCAACCTCAACGGTCACTGCAGTCCCAGCACCTCAGCAGCCTGCGCCTGCCATACCCCCTCCCCCACCCACCCACACACACCATCCGGGCCCACGGTGGGACCCAGATGTCATGCGCTGTACGGGCGAGCAACTAGCCCCCACCTCTTCCCAAGAGGCAAAACCT'
 
 # （方法2）使用本地模型推理（提供一个包含多条待预测序列的文件用于推理）
-python model_inference.py -m plant-dnagpt-BPE-promoter -f plant-multi-species-core-promoters/test.csv -o promoter_predict_results.txt
+python model_inference.py -m models/plant-dnagpt-BPE-promoter -f data/plant-multi-species-core-promoters/test.csv -o inference/promoter_predict_results.txt
 
 # （方法3）使用在线下载的模型进行推理（直接从modelscope或huggingface读取我们训练的模型，不从本地读取）
 python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms modelscope -s 'GGGAAAAAGTGAACTCCATTGTTTTTTCACGCTAAGCAGACCACAATTGCTGCTTGGTACGAAAAGAAAACCGAACCCTTTCACCCACGCACAACTCCATCTCCATTAGCATGGACAGAACACCGTAGATTGAACGCGGGAGGCAACAGGCTAAATCGTCCGTTCAGCCAAAACGGAATCATGGGCTGTTTTTCCAGAAGGCTCCGTGTCGTGTGGTTGTGGTCCAAAAACGAAAAAGAAAGAAAAAAGAAAACCCTTCCCAAGACGTGAAGAAAAGCAATGCGATGCTGATGCACGTTA'
@@ -335,32 +342,8 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 * 脚本中其他参数的说明可以参考 [模型推理](#3-模型推理) 中的使用说明。
 
-#### 基于图形界面（GUI）进行推理
 
-为了方便用户使用，我们也构建了基于[Gradio](https://www.gradio.app/)（一个界面友好的web app）的推理图形界面，用于用户在自己的电脑上预测各类下游任务。
-
-同样地，针对用户本地设备是否有显卡，我们也提供了2个版本的docker镜像。对于基于CPU的图形界面推理，用户可以简单地通过运行以下命令，之后在浏览器中打开`http://127.0.0.1:7860`网页，即可看到带有多个可选参数的图形界面。  
-（需要注意的是，plant DNAMamba模型因为目前不支持CPU推理，所以未在CPU的docker镜像中展示）
-
-```bash
-mkdir -p llms_gradio/cache
-cd llms_gradio
-docker run -p 7860:7860 -v ./cache:/root/.cache --name gradio_cpu cr.bioinfor.eu.org/zhangtaolab/plant_llms_gradio:cpu
-```
-
-当进行推理时，模型会自动下载到用户电脑的`llms_gradio/cache`目录中，可重复使用。
-
-基于GPU的图形界面模型推理需要用户提前安装好[Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)，请仔细根据官方说明安装配置好。
-
-环境配置好后，直接运行如下命令，之后在浏览器中打开`http://127.0.0.1:7860`网页即可。
-
-```bash
-mkdir -p llms_gradio/cache
-cd llms_gradio
-docker run --gpus=all -p 7860:7860 -v ./cache:/root/.cache --name gradio_gpu cr.bioinfor.eu.org/zhangtaolab/plant_llms_gradio:gpu
-```
-
-#### 在线预测平台
+### 在线预测平台
 
 为了方便用户使用模型预测DNA分析任务，我们也提供了在线的预测平台。
 
@@ -372,3 +355,8 @@ docker run --gpus=all -p 7860:7860 -v ./cache:/root/.cache --name gradio_gpu cr.
 对于需要使用我们的代码在Jupyter Notebook或其他地方进行推理的开发者，我们开发了一个名为`pdllib`简单的API包，支持通过简单的推理函数实现快速的模型测试。
 
 此外，我们也提供了一个基于Jupyter Notebook的[测试Demo](notebook/inference_demo.ipynb)，说明了我们的API如何使用。
+
+
+### 引用
+
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006

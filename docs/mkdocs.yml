@@ -20,14 +20,18 @@ plugins:
   - search:
       lang: en
 
+repo_url: https://github.com/zhangtaolab/Plant_DNA_LLMs
+
 nav:
   - Home: index.md
-  - Getting started:
+  - Getting Started:
     - Environment: environment.md
     - 'Fine tune': fine_tune.md
     - Inference: inference.md
     - 'Docker implementation for model inference': docker_implementation_for_model_inference.md
-  - resources:
+    - 'Inference API for developers': inference_api_for_developers.md
+    - 'Citation': citation.md
+  - Resources:
     - 'Pretrain models': resources/pretrain_models.md
     - 'Fine tune models': resources/finetune_models.md
     - 'Platforms': resources/platforms.md

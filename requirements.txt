@@ -4,8 +4,10 @@ evaluate
 numpy<2.0
 peft
 scipy
-scikit-learn
-torch
+scikit-learn<=1.5.0
+tensorboard
+torch<2.4
 tqdm
-transformers<4.43
-modelscope<=1.19.1
+transformers<4.46
+modelscope<=1.20.1
+mambapy<=1.2.0
