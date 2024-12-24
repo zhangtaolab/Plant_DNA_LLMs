@@ -350,6 +350,13 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 请参考：[在线预测列表](docs/platforms_zh.md)
 
 
+### 5. 适用于开发者的模型推理API
+
+对于需要使用我们的代码在Jupyter Notebook或其他地方进行推理的开发者，我们开发了一个名为`pdllib`简单的API包，支持通过简单的推理函数实现快速的模型测试。
+
+此外，我们也提供了一个基于Jupyter Notebook的[测试Demo](notebook/inference_demo.ipynb)，说明了我们的API如何使用。
+
+
 ### 引用
 
 * Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006

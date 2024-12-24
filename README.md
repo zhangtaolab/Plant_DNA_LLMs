@@ -345,6 +345,13 @@ In order to facilitate users to use the model to predict DNA analysis tasks, we 
 Please refer to [online prediction platform](docs/en/resources/platforms.md)
 
 
+### 5. Inference API for developers
+
+For developers who want to use our inference code in the Jupyter Notebook or other places, we developed a simple API package in the `pdllib`, which allows users directly call the inference function.
+
+Besides, we provide a Demo that shows the usage of our API, see [notebook/inference_demo.ipynb](notebook/inference_demo.ipynb).
+
+
 ### Citation
 
 * Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
