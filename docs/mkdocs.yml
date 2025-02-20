@@ -26,6 +26,7 @@ nav:
   - Home: index.md
   - Getting Started:
     - Environment: environment.md
+    - Pretrain: pretrain.md
     - 'Fine tune': fine_tune.md
     - Inference: inference.md
     - 'Docker implementation for model inference': docker_implementation_for_model_inference.md

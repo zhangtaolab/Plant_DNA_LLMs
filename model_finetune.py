@@ -163,8 +163,10 @@ class TrainerWithoutSafeTensor(Trainer):
     def save_model(self, output_dir=None, _internal_call=True):
         if output_dir is None:
             output_dir = self.args.output_dir
-        # use safe_serialization=False to save model
+
+        # 使用 safe_serialization=False 保存模型
         self.model.save_pretrained(output_dir, safe_serialization=False)
+
 
 def train():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
@@ -320,7 +322,7 @@ def train():
         from pdllib.metrics import metrics_for_dnabert2
         compute_metrics, preprocess_logits_for_metrics = metrics_for_dnabert2(model_args.train_task)
 
-        trainer = trainer(model=model, tokenizer=tokenizer,
+        trainer = trainer_cls(model=model, tokenizer=tokenizer,
                           args=training_args,
                           train_dataset=dataset['train'],
                           eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
@@ -328,19 +330,20 @@ def train():
                           preprocess_logits_for_metrics=preprocess_logits_for_metrics)
     else:
         trainer = trainer_cls(model=model, tokenizer=tokenizer,
-                              args=training_args,
-                              train_dataset=dataset['train'],
-                              eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
-                              compute_metrics=compute_metrics)
+                          args=training_args,
+                          train_dataset=dataset['train'],
+                          eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
+                          compute_metrics=compute_metrics)
 
     if model_args.load_checkpoint:
         trainer.train(model_args.load_checkpoint)
     else:
         trainer.train()
 
-    # save model in hf format
+    # save model in hf/pytorch format
     trainer.save_model(training_args.output_dir)
     # model.save_pretrained(training_args.output_dir)
+    # tokenizer.save_pretrained(training_args.output_dir)
 
     # do prediction if test datasets is existed
     if 'test' in dataset and 'dev' in dataset:
