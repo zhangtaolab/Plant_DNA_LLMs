@@ -74,7 +74,79 @@ $ git lfs version
 git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.8)
 ```
 
-## 2. 模型微调
+## 3. 模型的预训练
+
+要使用自己的数据预训练一个DNA大语言模型，需要先从[ModelScope](https://www.modelscope.cn/organization/zhangtaolab)或[HuggingFace](https://huggingface.co/zhangtaolab)网站下载需要的模型。可以使用 `git clone` 命令行（确保 `git-lfs` 命令正确安装）下载模型，或者直接在网页点击下载将模型下载到本地。
+
+在激活的 `llms` conda环境下，可以使用 `model_pretrain_from_scratch.py` 脚本训练模型。
+
+训练模型前，需要准备好训练数据集，数据集中需要包含拆分过的目标基因组序列（通常小于2000bp），具体的数据准备流程请参考[文章附件中的说明](https://www.cell.com/molecular-plant/fulltext/S1674-2052(24)00390-3)。
+
+准备好的预训练数据集应该像[这样](https://huggingface.co/datasets/zhangtaolab/plant-reference-genomes).
+
+* 预训练模型的列表可参考 [预训练模型列表](docs/zh/pretrain_models_zh.md)
+
+这里我们以基于BPE tokenizer的Plant DNAGPT模型为例，从头预训练DNAGPT模型。
+
+首先先从ModelScope或Huggingface下载所需模型：
+
+```bash
+# 准备一个工作目录
+mkdir finetune
+# 下载预训练模型
+git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
+# 准备好自己的训练数据集，数据可以存放在data目录下
+# 例如：data/pretrain_data.txt
+```
+
+* 如果从Huggingface下载遇到网络错误，请尝试从modelscope下载或者更换加速镜像。
+```bash
+# 使用Git下载
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# 使用huggingface-cli下载
+export HF_ENDPOINT="https://hf-mirror.com"
+huggingface-cli download [organization_name/repo_name]
+```
+
+模型文件和训练数据准备好后，可以使用如下命令开始模型预训练。
+
+```bash
+python model_pretrain_from_scratch.py \
+    --model_name_or_path models/plant-dnagpt-BPE \
+    --train_data data/pretrain_data.txt \
+    --per_device_train_batch_size 16 \
+    --gradient_accumulation_steps 24 \
+    --num_train_epochs 5 \
+    --learning_rate 1e-4 \
+    --warmup_ratio 0.05 \
+    --bf16 \
+    --logging_strategy steps \
+    --logging_steps 100 \
+    --save_strategy steps \
+    --save_steps 500 \
+    --output_dir pretrain/dnagpt-BPE_updated
+```
+
+以上的命令中，不同参数的介绍如下：  
+1. `--model_name_or_path`: 基础DNA模型的路径
+2. `--train_data`: 待训练数据的路径
+3. `--per_device_train_batch_size`: 模型训练时的batch size
+4. `--gradient_accumulation_steps`: 模型训练时的梯度累计步数
+5. `--num_train_epochs`: 模型训练时的epoch数 (如果希望以`steps`进行训练，使用`--num_train_steps`参数, 需要确保模型保存、日志和评估的方法也都改成`steps`)
+6. `--learning_rate`: 学习率
+7. `--warmup_ratio`: 模型训练开始,逐渐增加学习率的步数比例
+8. `--bf16`: 使用bf16精度训练
+9. `--logging_strategy`: 模型输出日志的方法，可以是 `epoch` or `steps`
+10. `--logging_steps`: 每隔多少步输出一次训练日志
+11. `--save_strategy`: 模型保存的方法，可以是 `epoch` or `steps`
+12. `--save_steps`: 每隔多少步保存一次模型
+13. `--output_dir`: 模型保存路径
+
+更多关于参数的细节，可以参考[transformers官方文档](https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments)。
+
+最后，等待进度条结束，预训练好的模型会保存在`pretrain/dnagpt-BPE_updated`目录中。在该目录中，会包含checkpoint目录，runs目录，以及保存好的预训练模型。
+
+## 3. 模型微调
 
 微调植物DNA大语言模型前，需要先从[ModelScope](https://www.modelscope.cn/organization/zhangtaolab)或[HuggingFace](https://huggingface.co/zhangtaolab)网站下载需要的模型。可以使用 `git clone` 命令行（确保 `git-lfs` 命令正确安装）下载模型，或者直接在网页点击下载将模型下载到本地。
 
@@ -159,7 +231,7 @@ python model_finetune.py \
 
 最后，等待进度条结束，微调好的模型会保存在`plant-dnagpt-BPE-promoter`目录中。在该目录中，会包含checkpoint目录，runs目录，以及保存好的微调模型。
 
-## 3. 模型推理
+## 4. 模型推理
 
 在使用微调模型推理（预测任务）前，请先下载已经我们提供的微调模型（[ModelScope](https://www.modelscope.cn/organization/zhangtaolab) 或 [HuggingFace](https://huggingface.co/zhangtaolab)）到本地，或使用前面提供的脚本自己训练一个微调模型用于推理。
 
@@ -202,7 +274,7 @@ python model_inference.py -m zhangtaolab/plant-dnagpt-BPE-promoter -ms modelscop
 输出结果会包含原始序列，序列的长度，如果是分类任务，会返回预测的分类结果及其对应的预测可能性；如果是回归任务，会返回预测的得分。
 
 
-## 4. 使用docker在本地推理模型
+## 5. 使用docker在本地推理模型
 
 前面提到的大语言模型训练所需环境的构建比较繁琐，需要安装大量的依赖。为了精简这一过程，我们提供了一个基于docker的镜像，方便用户快速实现模型推理。
  
@@ -350,7 +422,7 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 请参考：[在线预测列表](docs/platforms_zh.md)
 
 
-### 5. 适用于开发者的模型推理API
+### 6. 适用于开发者的模型推理API
 
 对于需要使用我们的代码在Jupyter Notebook或其他地方进行推理的开发者，我们开发了一个名为`pdllib`简单的API包，支持通过简单的推理函数实现快速的模型测试。
 
@@ -359,4 +431,4 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 ### 引用
 
-* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** DOI: https://doi.org/10.1016/j.molp.2024.12.006
+* Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** 2025, 18(2):175-178

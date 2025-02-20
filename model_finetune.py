@@ -77,6 +77,7 @@ class TrainingArguments(TrainingArguments):
     checkpointing: bool = field(default=False)
     dataloader_pin_memory: bool = field(default=False)
     seed: int = field(default=7)
+    no_safe_serialization: bool = field(default=False)
 
 
 ############################################################
@@ -158,9 +159,20 @@ def evaluate_metrics(task):
 ############################################################
 ## Trainer ###############################################
 
+class TrainerWithoutSafeTensor(Trainer):
+    def save_model(self, output_dir=None, _internal_call=True):
+        if output_dir is None:
+            output_dir = self.args.output_dir
+        # 使用 safe_serialization=False 保存模型
+        self.model.save_pretrained(output_dir, safe_serialization=False)
+
+
 def train():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+
+    # set random seed
+    torch.manual_seed(training_args.seed)
 
     # define model source
     if os.path.exists(model_args.model_name_or_path):
@@ -289,22 +301,33 @@ def train():
         print('Update tokenizer length:', len(tokenizer))
         model.resize_token_embeddings(len(tokenizer))
 
+    # try to initiate the classifier layer weight manually
+    if hasattr(model, 'score'):
+        torch.nn.init.xavier_uniform_(model.score.weight)
+    if hasattr(model, 'classifier'):
+        torch.nn.init.xavier_uniform_(model.classifier.weight)
+
     # define computer_metrics
     compute_metrics = evaluate_metrics(model_args.train_task.lower())
 
     # define trainer
+    if training_args.no_safe_serialization:
+        trainer_cls = TrainerWithoutSafeTensor
+    else:
+        trainer_cls = Trainer
+
     if ('DNABERT-2' in model_args.model_name_or_path) or ('dnabert2' in model_args.model_name_or_path.lower()):
         from pdllib.metrics import metrics_for_dnabert2
         compute_metrics, preprocess_logits_for_metrics = metrics_for_dnabert2(model_args.train_task)
 
-        trainer = Trainer(model=model, tokenizer=tokenizer,
+        trainer = trainer_cls(model=model, tokenizer=tokenizer,
                           args=training_args,
                           train_dataset=dataset['train'],
                           eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
                           compute_metrics=compute_metrics,
                           preprocess_logits_for_metrics=preprocess_logits_for_metrics)
     else:
-        trainer = Trainer(model=model, tokenizer=tokenizer,
+        trainer = trainer_cls(model=model, tokenizer=tokenizer,
                           args=training_args,
                           train_dataset=dataset['train'],
                           eval_dataset=dataset['dev'] if 'dev' in dataset else dataset['test'],
@@ -315,9 +338,10 @@ def train():
     else:
         trainer.train()
 
-    # save model in hf format
+    # save model in hf/pytorch format
     trainer.save_model(training_args.output_dir)
     # model.save_pretrained(training_args.output_dir)
+    # tokenizer.save_pretrained(training_args.output_dir)
 
     # do prediction if test datasets is existed
     if 'test' in dataset and 'dev' in dataset:
