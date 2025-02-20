@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../docker_implementation_for_model_inference/">
+        <link rel="prev" href="../environment/">
       
       
-        <link rel="next" href="../citation/">
+        <link rel="next" href="../fine_tune/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Inference API for developers - Plant DNA LLMs Docs</title>
+        <title>Pretrain - Plant DNA LLMs Docs</title>
       
     
     
@@ -91,7 +91,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Inference API for developers
+              Pretrain
             
           </span>
         </div>
@@ -358,10 +358,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../pretrain/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -371,6 +378,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -446,17 +454,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../inference_api_for_developers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -466,7 +467,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -648,10 +648,64 @@
   
 
 
-  <h1>Inference API for developers</h1>
+  <h1>Pretrain</h1>
 
-<p>For developers who want to use our inference code in the Jupyter Notebook or other places, we developed a simple API package in the <code>pdllib</code>, which allows users directly call the inference function.</p>
-<p>Besides, we provide a Demo that shows the usage of our API, see <a href="https://github.com/zhangtaolab/Plant_DNA_LLMs/blob/main/notebook/inference_demo.ipynb">notebook/inference_demo.ipynb</a>.</p>
+<p>To pretrain our DNA models from scratch, please first download the desired pretrained models from <a href="https://huggingface.co/zhangtaolab">HuggingFace</a> or <a href="https://www.modelscope.cn/organization/zhangtaolab">ModelScope</a> to local. You can use <code>git clone</code> (which may require <code>git-lfs</code> to be installed) to retrieve the model or directly download the model from the website.</p>
+<p>In the activated <code>llms</code> python environment, use the <code>model_pretrain_from_scratch.py</code> script to pretrain a model use your own dataset. </p>
+<p>Before training the model, please prepare a training dataset that contains the splited sequences (length shorted than 2000 bp) from the target genomes. (Detailed information can be found in the supplemental notes out our <a href="https://www.cell.com/molecular-plant/fulltext/S1674-2052(24)00390-3">manuscript</a>)</p>
+<p>The dataset file should look like <a href="https://huggingface.co/datasets/zhangtaolab/plant-reference-genomes">this</a>.</p>
+<ul>
+<li>Here is the <a href="docs/en/resources/pretrain_models.md">pretrain models list</a></li>
+</ul>
+<p>We use DNAGPT model as an example to perform the pretrain.</p>
+<pre><code class="language-bash"># prepare a output directory
+mkdir pretrain
+# download pretrain model
+git clone https://huggingface.co/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
+# prepare your own dataset for pretraining, data can be stored at the data directory
+# example: data/pretrain_data.txt
+</code></pre>
+<ul>
+<li>Note: If downloading from huggingface encounters network error, please try to download model from ModelScope or change to the accelerate mirror before downloading.</li>
+</ul>
+<pre><code class="language-bash"># Download with git
+git clone https://hf-mirror.com/[organization_name/repo_name]
+# Download with huggingface-cli
+export HF_ENDPOINT=&quot;https://hf-mirror.com&quot;
+huggingface-cli download [organization_name/repo_name]
+</code></pre>
+<p>After preparing the model and dataset, using the following script to pretrain the model.</p>
+<pre><code class="language-bash">python model_pretrain_from_scratch.py \
+    --model_name_or_path models/plant-dnagpt-BPE \
+    --train_data data/pretrain_data.txt \
+    --per_device_train_batch_size 16 \
+    --gradient_accumulation_steps 24 \
+    --num_train_epochs 5 \
+    --learning_rate 1e-4 \
+    --warmup_ratio 0.05 \
+    --bf16 \
+    --logging_strategy steps \
+    --logging_steps 100 \
+    --save_strategy steps \
+    --save_steps 500 \
+    --output_dir pretrain/dnagpt-BPE_updated
+</code></pre>
+<p>In this script:<br />
+1. <code>--model_name_or_path</code>: Path to the foundation model you downloaded
+2. <code>--train_data</code>: Path to the train dataset
+3. <code>--per_device_train_batch_size</code>: Batch size for training model
+4. <code>--gradient_accumulation_steps</code>: Number of updates steps to accumulate the gradients for, before performing a backward/update pass
+5. <code>--num_train_epochs</code>: Epoch for training model (also you can train model with steps, then you should change the strategies for save, logging and evaluation)
+6. <code>--learning_rate</code>: Learning rate for training model
+7. <code>--warmup_ratio</code>: Ratio of total training steps used for a linear warmup from 0 to <code>learning_rate</code>
+8. <code>--bf16</code>: Use bf16 precision for training
+9. <code>--logging_strategy</code>: Strategy for logging training information, can be <code>epoch</code> or <code>steps</code>
+10. <code>--logging_steps</code>: Steps for logging training information
+11. <code>--save_strategy</code>: Strategy for saving model, can be <code>epoch</code> or <code>steps</code>
+12. <code>--save_steps</code>: Steps for saving model checkpoints
+13. <code>--output_dir</code>: Where to save the pretrained model</p>
+<p>Detailed descriptions of the arguments can be referred <a href="https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments">here</a>.</p>
+<p>Finally, wait for the progress bar completed, and the pretrained model will be saved in the <code>pretrain/dnagpt-BPE_updated</code> directory. In this directory, there will be checkpoint directories, a runs directory, and a saved pretrained model.</p>
 
 
 
