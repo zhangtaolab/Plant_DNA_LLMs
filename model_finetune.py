@@ -163,6 +163,7 @@ class TrainerWithoutSafeTensor(Trainer):
     def save_model(self, output_dir=None, _internal_call=True):
         if output_dir is None:
             output_dir = self.args.output_dir
+
         # 使用 safe_serialization=False 保存模型
         self.model.save_pretrained(output_dir, safe_serialization=False)
 
@@ -316,6 +317,7 @@ def train():
     else:
         trainer_cls = Trainer
 
+    # define trainer
     if ('DNABERT-2' in model_args.model_name_or_path) or ('dnabert2' in model_args.model_name_or_path.lower()):
         from pdllib.metrics import metrics_for_dnabert2
         compute_metrics, preprocess_logits_for_metrics = metrics_for_dnabert2(model_args.train_task)
