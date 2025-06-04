@@ -231,21 +231,21 @@ Finally, wait for the progress bar completed, and the fine-tuned model will be s
 
 To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.
 
-* Here is the [finetune models list](docs/en/resources/finetune_models.md)
-
 * Here is the recommended models for different genomic tasks
 
-|           Genomic task         |      Recommended model    | Accuracy |   F1   | AUROC  |  R2   | Link |
-| ------------------------------ | ------------------------- | -------- | ------ | ------ | ----- | ---- |
-| Core promoters                 | Plant DNAGPT 6mer         | 0.8946   | 0.8961 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagpt-6mer-promoter) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagpt-6mer-promoter) |
-| Sequence conservation          | Plant DNAMamba 6mer       | 0.9053   | 0.9055 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-conservation) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-conservation) |
-| H3K27ac                        | Plant DNAMamba 6mer       | 0.8135   | 0.8165 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-H3K27ac) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-H3K27ac) |
-| H3K27me3                       | Plant DNAMamba 4mer       | 0.7757   | 0.7843 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-4mer-H3K27me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-4mer-H3K27me3) |
-| H3K4me3                        | Plant DNAMamba 5mer       | 0.8996   | 0.8991 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-5mer-H3K4me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-5mer-H3K4me3) |
-| lncRNAs                        | Plant DNAGemma 6mer       | 0.8571   | 0.8821 |   -    |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-6mer-lncRNAs) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-6mer-lncRNAs) |
-| Open chromatin                 | Plant DNAMamba BPE        |    -     | 0.6413 | 0.8177 |   -   | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-BPE-open_chromatin) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-BPE-open_chromatin) |
-| Promoter strength (leaf)       | Plant NT singlebase       |    -     |   -    |   -    | 0.768 | [Huggingface](https://huggingface.co/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) |
-| Promoter strength (protoplast) | Plant DNAGemma singlebase |    -     |   -    |   -    | 0.721 | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) |
+|           Genomic task         |      Recommended model    | Link |
+| ------------------------------ | ------------------------- | ---- |
+| Core promoters                 | Plant DNAGPT 6mer         | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagpt-6mer-promoter) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagpt-6mer-promoter) |
+| Sequence conservation          | Plant DNAMamba 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-conservation) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-conservation) |
+| H3K27ac                        | Plant DNAMamba 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-H3K27ac) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-H3K27ac) |
+| H3K27me3                       | Plant DNAMamba 4mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-4mer-H3K27me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-4mer-H3K27me3) |
+| H3K4me3                        | Plant DNAMamba 5mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-5mer-H3K4me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-5mer-H3K4me3) |
+| lncRNAs                        | Plant DNAGemma 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-6mer-lncRNAs) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-6mer-lncRNAs) |
+| Open chromatin                 | Plant DNAMamba BPE        | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-BPE-open_chromatin) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-BPE-open_chromatin) |
+| Promoter strength (leaf)       | Plant NT singlebase       | [Huggingface](https://huggingface.co/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) |
+| Promoter strength (protoplast) | Plant DNAGemma singlebase | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) |
+
+* All the [finetune models list](docs/en/resources/finetune_models.md)
 
 We use Plant DNAGPT model as example to predict active core promoter in plants.
 
