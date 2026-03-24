@@ -1,0 +1,21 @@
+run_name: finetune_expr_regression_v1
+seed: 7
+precision: bf16
+batch_size: 8
+gradient_accumulation_steps: 8
+epochs: 20
+optimizer:
+  type: adamw
+  lr: 1.0e-4
+  weight_decay: 0.01
+scheduler:
+  type: cosine
+  warmup_ratio: 0.05
+loss:
+  main: mse
+  aux:
+    - pearson
+monitor:
+  metric: val_spearman
+  mode: max
+  early_stopping_patience: 5

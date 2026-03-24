@@ -1,0 +1,16 @@
+name: mamba_multimodal_v1
+backbone: mamba
+sequence_encoder:
+  tokenizer: kmer_6
+  max_length: 4096
+  d_model: 256
+  num_layers: 8
+signal_encoder:
+  type: cnn
+  input_channels: 3
+  hidden_dim: 128
+fusion:
+  type: gated
+heads:
+  expression_regression: true
+  expression_classification: false

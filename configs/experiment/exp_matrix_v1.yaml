@@ -1,0 +1,32 @@
+experiments:
+  - id: exp01
+    model: transformer_multimodal_v1
+    tokenizer: bpe
+    fusion: cross_attention
+    split: chromosome
+  - id: exp02
+    model: transformer_multimodal_v1
+    tokenizer: kmer_6
+    fusion: cross_attention
+    split: chromosome
+  - id: exp03
+    model: mamba_multimodal_v1
+    tokenizer: bpe
+    fusion: gated
+    split: chromosome
+  - id: exp04
+    model: mamba_multimodal_v1
+    tokenizer: kmer_6
+    fusion: gated
+    split: chromosome
+  - id: exp05
+    model: transformer_multimodal_v1
+    tokenizer: bpe
+    fusion: cross_attention
+    split: leave_tissue_out
+  - id: exp06
+    model: mamba_multimodal_v1
+    tokenizer: bpe
+    fusion: gated
+    split: leave_species_out
+report_metrics: [pearson, spearman, mse, mae]

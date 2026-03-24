@@ -1,0 +1,24 @@
+name: maize_multiomics_v1
+reference_genome: Zm-B73-REFERENCE-NAM-5.0
+coordinate_system: 1-based
+window:
+  upstream_bp: 50000
+  downstream_bp: 10000
+binning:
+  bin_size_bp: 100
+  normalize: cpm
+inputs:
+  sequence_fasta: /path/to/genome.fa
+  gene_annotation_gtf: /path/to/annotation.gtf
+  atac_bigwig: /path/to/atac.bw
+  chip_bigwigs:
+    - mark: H3K27ac
+      path: /path/to/h3k27ac.bw
+    - mark: H3K4me3
+      path: /path/to/h3k4me3.bw
+  expression_matrix: /path/to/expression.tsv
+splits:
+  strategy: chromosome
+  train_chroms: ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8"]
+  valid_chroms: ["chr9"]
+  test_chroms: ["chr10"]
