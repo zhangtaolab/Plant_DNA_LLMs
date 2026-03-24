@@ -1,0 +1,19 @@
+name: transformer_multimodal_v1
+backbone: transformer
+sequence_encoder:
+  tokenizer: bpe
+  vocab_size: 8192
+  max_length: 1024
+  d_model: 256
+  num_layers: 6
+  num_heads: 8
+signal_encoder:
+  type: cnn
+  input_channels: 3
+  hidden_dim: 128
+fusion:
+  type: cross_attention
+  num_layers: 2
+heads:
+  expression_regression: true
+  expression_classification: true
