@@ -443,6 +443,30 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 此外，我们也提供了一个基于Jupyter Notebook的[测试Demo](notebook/inference_demo.ipynb)，说明了我们的API如何使用。
 
 
+### 7. 华为昇腾NPU环境构建与训练
+
+本节介绍如何在华为昇腾NPU（Ascend）环境下构建运行环境并进行模型训练与推理。
+
+#### 7.1 华为昇腾NPU环境配置
+
+<!-- TODO: 填写华为昇腾NPU驱动与CANN软件栈的安装说明 -->
+
+<!-- TODO: 填写基于昇腾NPU的PyTorch环境安装说明（如torch_npu等） -->
+
+<!-- TODO: 填写项目依赖在昇腾NPU环境下的安装说明 -->
+
+#### 7.2 在华为昇腾NPU上预训练模型
+
+<!-- TODO: 填写在昇腾NPU上进行模型预训练的命令与注意事项 -->
+
+#### 7.3 在华为昇腾NPU上微调模型
+
+<!-- TODO: 填写在昇腾NPU上进行模型微调的命令与注意事项 -->
+
+#### 7.4 在华为昇腾NPU上进行模型推理
+
+<!-- TODO: 填写在昇腾NPU上进行模型推理的命令与注意事项 -->
+
 ### 引用
 
 * Liu GQ, Chen L, Wu YC, Han YS, Bao Y, Zhang T\*. [PDLLMs: A group of tailored DNA large language models for analyzing plant genomes](https://doi.org/10.1016/j.molp.2024.12.006). ***Molecular Plant*** 2025, 18(2):175-178
