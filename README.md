@@ -62,11 +62,47 @@ pip install 'mamba-ssm<2'
 ```
 
 ##### 1.3.2 Huawei
-Install [HUAWEI driver](https://www.hiascend.com/hardware/firmware-drivers/community) and [CANN](https://www.hiascend.com/software/cann).
+Install [HUAWEI driver](https://www.hiascend.com/hardware/firmware-drivers/community).
 
-Activate CANN environment variables:
+Install CANN:
+Check the CANN version required by torch-npu:
+
 ```bash
-source /usr/local/Ascend/ascend-toolkit/set_env.sh
+grep -r "CANN" /path/to/venv/lib/python3.10/site-packages/torch_npu/_op_plugin_docs.py | head -3
+```
+
+Download and install:
+```bash
+# Download (~1.9GB)
+wget -c "https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.RC2/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run" \
+  -O /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+
+# Install
+chmod +x /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+/tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run \
+  --install --quiet --install-for-all \
+  --install-path=/usr/local/Ascend/ascend-toolkit
+
+# Cleanup
+rm /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+```
+
+Configure environment variables:
+
+```bash
+# Write to shell config (choose one)
+echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.zshrc
+# echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.bashrc
+
+# Apply immediately
+source ~/.zshrc
+```
+
+Verify:
+
+```bash
+# Check CANN version
+cat /usr/local/Ascend/ascend-toolkit/ascend-toolkit/latest/version.cfg
 ```
 
 Install torch and torch_npu:

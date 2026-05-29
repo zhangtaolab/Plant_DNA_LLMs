@@ -32,20 +32,19 @@ conda activate llms
 ```
 
 #### 1.3 安装依赖
-
-模型训练和推理需要确保[NVIDIA显卡的驱动](https://www.nvidia.com/download/index.aspx)被正确安装，此外对应的[CUDA驱动](https://developer.nvidia.com/cuda-downloads)（版本>11.0, 本环境使用CUDA 12.1）也要安装。
-
+##### 1.3.1 Nvidia
+如果需要进行模型预训练或微调，请确保使用的是NVIDIA显卡。请安装[NVIDIA显卡驱动](https://www.nvidia.com/download/index.aspx)以及对应版本的[CUDA驱动](https://developer.nvidia.com/cuda-downloads)（版本>11.0, 本环境使用CUDA 12.1）。
 
 另外，对应版本的[Pytorch](https://pytorch.org/)包（版本>=2.0）也要安装好。推荐使用 `pip` 安装python依赖包。请一定认真安装对应的cuda和torch版本，本测试环境中使用的cuda版本为12.1。pytorch详细安装教程请参考[官方网站](https://pytorch.org/)。
 
 ```bash
-pip install 'torch<2.5' 
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cu121
 ```
 
 如果只需要进行模型推理（预测任务），也可以只安装CPU版本的Pytorch。
 
 ```bash
-pip install 'torch<2.5' 
+pip install 'torch<2.4' --index-url https://download.pytorch.org/whl/cpu
 ```
 
 下一步，克隆本仓库，并安装其他模型训练/推理所需的依赖。
@@ -56,12 +55,95 @@ cd Plant_DNA_LLMs
 pip install -r requirements.txt
 ```
 
-（可选步骤）如果需要训练[Mamba](https://github.com/state-spaces/mamba)模型，还需要安装以下这些额外的依赖；此外，DNA Mamba模型的训练和推理必须使用NVIDIA显卡。  
-注意Mamba模型最低支持Nvidia 10系以上的显卡（如GTX1660s，RTX2080, RTX3060, RTX4070等，不支持GTX1080Ti等20系列以下的显卡）
+（可选步骤）如果需要训练[Mamba](https://github.com/state-spaces/mamba)模型，还需要安装以下这些额外的依赖；此外，DNA Mamba模型的训练和推理必须使用NVIDIA显卡。
 
 ```bash
 pip install 'causal-conv1d<=1.3'
 pip install 'mamba-ssm<2'
+```
+
+##### 1.3.2 华为昇腾NPU
+安装[华为昇腾驱动](https://www.hiascend.com/hardware/firmware-drivers/community)。
+
+
+安装CANN：
+查看 torch-npu 要求的 CANN 版本：
+
+```bash
+grep -r "CANN" /path/to/venv/lib/python3.10/site-packages/torch_npu/_op_plugin_docs.py | head -3
+```
+
+下载安装：
+```bash
+# 下载（约 1.9GB）
+wget -c "https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.RC2/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run" \
+  -O /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+
+# 安装
+chmod +x /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+/tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run \
+  --install --quiet --install-for-all \
+  --install-path=/usr/local/Ascend/ascend-toolkit
+
+# 清理
+rm /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+```
+
+配置环境变量：
+
+```bash
+# 写入 shell 配置（二选一）
+echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.zshrc
+# echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.bashrc
+
+# 立即生效
+source ~/.zshrc
+```
+
+验证：
+
+```bash
+# 检查 CANN 版本
+cat /usr/local/Ascend/ascend-toolkit/ascend-toolkit/latest/version.cfg
+```
+
+安装torch和torch_npu：
+```bash
+# PyTorch
+wget https://download-r2.pytorch.org/whl/cpu/torch-2.7.1%2Bcpu-cp311-cp311-manylinux_2_28_aarch64.whl#sha256=5fe6045b8f426bf2d0426e4fe009f1667a954ec2aeb82f1bd0bf60c6d7a85445
+pip3 install torch-2.7.1+cpu-cp311-cp311-manylinux_2_28_aarch64.whl 
+
+# torch_npu
+wget https://gitcode.com/Ascend/pytorch/releases/download/v26.1.0-beta.1-pytorch2.7.1/torch_npu-2.7.1.post5-cp311-cp311-manylinux_2_28_aarch64.whl
+pip3 install torch_npu-2.7.1.post5-cp311-cp311-manylinux_2_28_aarch64.whl 
+```
+
+安装其他所需依赖：
+```bash
+pip3 install -r requirements.txt
+```
+
+（可选步骤）如果需要训练[Mamba2](https://github.com/state-spaces/mamba)模型，还需要安装MindSpeed和Megatron-LM。
+```bash
+# MindSpeed
+git clone https://gitcode.com/ascend/MindSpeed.git
+cd MindSpeed
+git checkout master  # 从MindSpeed master分支checkout
+pip3 install -r requirements.txt 
+pip3 install -e .
+cd ..
+
+# MindSpeed-LLM & Megatron-LM
+git clone https://gitcode.com/ascend/MindSpeed-LLM.git
+git clone https://github.com/NVIDIA/Megatron-LM.git 
+cd Megatron-LM
+git checkout core_v0.12.1
+cp -r megatron ../MindSpeed-LLM/
+cd ../MindSpeed-LLM
+git checkout master
+mkdir logs
+
+pip3 install -r requirements.txt 
 ```
 
 #### 1.4 安装git-lfs
@@ -74,8 +156,8 @@ $ git lfs version
 git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.8)
 ```
 
-## 3. 模型的预训练
-
+## 2. 模型的预训练
+### 2.1 Nvidia
 要使用自己的数据预训练一个DNA大语言模型，需要先从[ModelScope](https://www.modelscope.cn/organization/zhangtaolab)或[HuggingFace](https://huggingface.co/zhangtaolab)网站下载需要的模型。可以使用 `git clone` 命令行（确保 `git-lfs` 命令正确安装）下载模型，或者直接在网页点击下载将模型下载到本地。
 
 在激活的 `llms` conda环境下，可以使用 `model_pretrain_from_scratch.py` 脚本训练模型。
@@ -92,7 +174,7 @@ git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.8)
 
 ```bash
 # 准备一个工作目录
-mkdir finetune
+mkdir pretrain
 # 下载预训练模型
 git clone https://modelscope.cn/models/zhangtaolab/plant-dnagpt-BPE models/plant-dnagpt-BPE
 # 准备好自己的训练数据集，数据可以存放在data目录下
@@ -146,8 +228,72 @@ python model_pretrain_from_scratch.py \
 
 最后，等待进度条结束，预训练好的模型会保存在`pretrain/dnagpt-BPE_updated`目录中。在该目录中，会包含checkpoint目录，runs目录，以及保存好的预训练模型。
 
-## 3. 模型微调
 
+### 2.2 华为昇腾NPU
+#### Mamba2
+相关脚本位于 `scripts/Mamba2_HUAWEI` 目录。
+
+数据预处理：
+```bash
+python ../scripts/Mamba2_HUAWEI/txt2parquet.py -i ../data/spv3_sample_tiny.txt -o ../data/spv3_sample_tiny.parquet
+
+python ./preprocess_data.py \
+    --input ../data/spv3_sample_tiny.parquet \
+    --tokenizer-type PretrainedFromHF \
+    --tokenizer-name-or-path models/mamba2_130M_spv3  \
+    --output-prefix ./datasets/spv3_sample \
+    --workers 8 \
+    --seq-length 512 
+```
+
+权重转换：
+```bash
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+export CUDA_DEVICE_MAX_CONNECTIONS=1
+
+python MindSpeed-LLM/convert_ckpt_v2.py \
+    --load-model-type hf \
+    --save-model-type mg \
+    --load-dir models/mamba2_130M_spv3 \
+    --save-dir models/mamba2_130M_spv3_mg \
+    --target-tensor-parallel-size 1 \
+    --target-pipeline-parallel-size 1 \
+    --hidden-size 768 \
+    --mamba-state-dim 128 \
+    --mamba-head-dim 64 \
+    --mamba-num-groups 1 \
+    --model-type-hf 'mamba2'
+```
+
+预训练：
+```bash
+bash ../../scripts/Mamba2_HUAWEI/pretrain_mamba2_130M.sh    
+```
+请根据实际的模型大小和训练参数修改脚本。
+
+
+#### 其他模型
+其他模型的训练方法与Nvidia相同。
+预训练：
+```bash
+python model_pretrain_from_scratch.py \
+    --model_name_or_path plant-dnabert-BPE \
+    --train_data data/spv3_sample_tiny.txt \
+    --per_device_train_batch_size 16 \
+    --gradient_accumulation_steps 24 \
+    --num_train_epochs 5 \
+    --learning_rate 1e-4 \
+    --warmup_ratio 0.05 \
+    --bf16 \
+    --logging_strategy steps \
+    --logging_steps 100 \
+    --save_strategy steps \
+    --save_steps 500 \
+    --output_dir pretrain/dnabert-BPE_updated
+```
+
+## 3. 模型微调
+### 3.1 Nvidia
 微调植物DNA大语言模型前，需要先从[ModelScope](https://www.modelscope.cn/organization/zhangtaolab)或[HuggingFace](https://huggingface.co/zhangtaolab)网站下载需要的模型。可以使用 `git clone` 命令行（确保 `git-lfs` 命令正确安装）下载模型，或者直接在网页点击下载将模型下载到本地。
 
 在激活的 `llms` conda环境下，可以使用 `model_finetune.py` 脚本针对下游任务微调模型。
@@ -230,6 +376,37 @@ python model_finetune.py \
 更多关于参数的细节，可以参考[transformers官方文档](https://huggingface.co/docs/transformers/en/main_classes/trainer#transformers.TrainingArguments)。
 
 最后，等待进度条结束，微调好的模型会保存在`plant-dnagpt-BPE-promoter`目录中。在该目录中，会包含checkpoint目录，runs目录，以及保存好的微调模型。
+
+### 3.2 华为昇腾NPU
+#### 3.2.1 Mamba2
+微调：
+```bash
+bash finetune_mamba2.sh
+```
+请根据实际的模型大小、finetune_mamba2.py路径和训练参数修改脚本。
+
+#### 其他模型
+其他模型的训练方法与Nvidia相同。
+```bash
+python model_finetune.py \
+    --model_name_or_path plant-dnabert-BPE \
+    --train_data data/train.csv \
+    --test_data data/test.csv \
+    --eval_data data/dev.csv \
+    --train_task classification \
+    --labels 'Not promoter;Core promoter' \
+    --run_name plant_dnabert_BPE_promoter \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 8 \
+    --learning_rate 1e-5 \
+    --num_train_epochs 5 \
+    --load_best_model_at_end \
+    --metric_for_best_model 'f1' \
+    --save_strategy epoch \
+    --logging_strategy epoch \
+    --evaluation_strategy epoch \
+    --output_dir finetune/plant-dnabert-BPE-promoter
+```
 
 ## 4. 模型推理
 
@@ -442,30 +619,6 @@ docker run -v ./:/home/llms cr.bioinfor.eu.org/zhangtaolab/plant_llms_inference:
 
 此外，我们也提供了一个基于Jupyter Notebook的[测试Demo](notebook/inference_demo.ipynb)，说明了我们的API如何使用。
 
-
-### 7. 华为昇腾NPU环境构建与训练
-
-本节介绍如何在华为昇腾NPU（Ascend）环境下构建运行环境并进行模型训练与推理。
-
-#### 7.1 华为昇腾NPU环境配置
-
-<!-- TODO: 填写华为昇腾NPU驱动与CANN软件栈的安装说明 -->
-
-<!-- TODO: 填写基于昇腾NPU的PyTorch环境安装说明（如torch_npu等） -->
-
-<!-- TODO: 填写项目依赖在昇腾NPU环境下的安装说明 -->
-
-#### 7.2 在华为昇腾NPU上预训练模型
-
-<!-- TODO: 填写在昇腾NPU上进行模型预训练的命令与注意事项 -->
-
-#### 7.3 在华为昇腾NPU上微调模型
-
-<!-- TODO: 填写在昇腾NPU上进行模型微调的命令与注意事项 -->
-
-#### 7.4 在华为昇腾NPU上进行模型推理
-
-<!-- TODO: 填写在昇腾NPU上进行模型推理的命令与注意事项 -->
 
 ### 引用
 
