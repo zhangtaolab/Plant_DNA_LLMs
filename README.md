@@ -18,7 +18,7 @@ Online prediction of other models and prediction tasks can be found [here](https
 
 ## 1. Environment
 
-[Anaconda](https://docs.anaconda.com/free/anaconda/install/) package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia GPU and the corresponding drivers are installed. For inference, devices without Nvidia GPU (CPU only, AMD GPU, Apple Silion, etc.) are also acceptable.
+[Anaconda](https://docs.anaconda.com/free/anaconda/install/) package manager is recommended for building the training environment. For pre-train and fine-tune models, please ensure that you have a Nvidia or HUAWEI GPU and the corresponding drivers are installed. For inference, devices without Nvidia or HUAWEI GPU (CPU only, AMD GPU, Apple Silicon, etc.) are also acceptable.
 
 #### 1.1 Download and install [Anaconda](https://www.anaconda.com/download) package manager
 
@@ -30,7 +30,7 @@ conda activate llms
 ```
 
 #### 1.3 Install dependencies
-
+##### 1.3.1 Nvidia
 If you want to pre-train or fine-tune models, make sure you are using Nvidia GPU(s).  
 Install [Nvidia driver](https://www.nvidia.com/download/index.aspx) and corresponding version of [CUDA driver](https://developer.nvidia.com/cuda-downloads) (> 11.0, we used CUDA 12.1).  
 
@@ -61,8 +61,94 @@ pip install 'causal-conv1d<=1.3'
 pip install 'mamba-ssm<2'
 ```
 
+##### 1.3.2 Huawei
+Install [HUAWEI driver](https://www.hiascend.com/hardware/firmware-drivers/community).
+
+Install CANN:
+Check the CANN version required by torch-npu:
+
+```bash
+grep -r "CANN" /path/to/venv/lib/python3.10/site-packages/torch_npu/_op_plugin_docs.py | head -3
+```
+
+Download and install:
+```bash
+# Download (~1.9GB)
+wget -c "https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.RC2/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run" \
+  -O /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+
+# Install
+chmod +x /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+/tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run \
+  --install --quiet --install-for-all \
+  --install-path=/usr/local/Ascend/ascend-toolkit
+
+# Cleanup
+rm /tmp/Ascend-cann-toolkit_8.0.RC2_linux-aarch64.run
+```
+
+Configure environment variables:
+
+```bash
+# Write to shell config (choose one)
+echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.zshrc
+# echo 'source /usr/local/Ascend/ascend-toolkit/ascend-toolkit/set_env.sh' >> ~/.bashrc
+
+# Apply immediately
+source ~/.zshrc
+```
+
+Verify:
+
+```bash
+# Check CANN version
+cat /usr/local/Ascend/ascend-toolkit/ascend-toolkit/latest/version.cfg
+```
+
+Install torch and torch_npu:
+```bash
+# PyTorch
+wget https://download-r2.pytorch.org/whl/cpu/torch-2.7.1%2Bcpu-cp311-cp311-manylinux_2_28_aarch64.whl#sha256=5fe6045b8f426bf2d0426e4fe009f1667a954ec2aeb82f1bd0bf60c6d7a85445
+pip3 install torch-2.7.1+cpu-cp311-cp311-manylinux_2_28_aarch64.whl 
+
+# torch_npu
+wget https://gitcode.com/Ascend/pytorch/releases/download/v26.1.0-beta.1-pytorch2.7.1/torch_npu-2.7.1.post5-cp311-cp311-manylinux_2_28_aarch64.whl
+pip3 install torch_npu-2.7.1.post5-cp311-cp311-manylinux_2_28_aarch64.whl 
+```
+
+Install other required dependencies:
+```bash
+pip3 install -r requirements.txt
+```
+
+(Optional) If you want to train a [mamba2](https://github.com/state-spaces/mamba) model, you need to install MindSpeed and Megatron-LM.
+```bash
+# MindSpeed
+git clone https://gitcode.com/ascend/MindSpeed.git
+cd MindSpeed
+git checkout master  # checkout commit from MindSpeed master
+pip3 install -r requirements.txt 
+pip3 install -e .
+cd ..
+
+# MindSpeed-LLM & Megatron-LM
+git clone https://gitcode.com/ascend/MindSpeed-LLM.git
+git clone https://github.com/NVIDIA/Megatron-LM.git 
+cd Megatron-LM
+git checkout core_v0.12.1
+cp -r megatron ../MindSpeed-LLM/
+cd ../MindSpeed-LLM
+git checkout master
+mkdir logs
+
+pip3 install -r requirements.txt 
+```
+
+
+
+
 #### 1.4 Install git-lfs
-`glt-lfs` is required for download large models and datasets，`git-lfs` installation can be refer to [git-lfs install](https://github.com/git-lfs/git-lfs?utm_source=gitlfs_site&utm_medium=installation_link&utm_campaign=gitlfs#installing).
+`git-lfs` is required for downloading large models and datasets. `git-lfs` installation can be referred to [git-lfs install](https://github.com/git-lfs/git-lfs?utm_source=gitlfs_site&utm_medium=installation_link&utm_campaign=gitlfs#installing).
 
 If `git-lfs` is installed, run the following command
 ```bash
@@ -74,7 +160,7 @@ git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.8)
 ```
 
 ## 2. Pretrain from scratch
-
+### 2.1 Nvidia
 To pretrain our DNA models from scratch, please first download the desired pretrained models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local. You can use `git clone` (which may require `git-lfs` to be installed) to retrieve the model or directly download the model from the website.
 
 In the activated `llms` python environment, use the `model_pretrain_from_scratch.py` script to pretrain a model use your own dataset. 
@@ -143,8 +229,75 @@ Detailed descriptions of the arguments can be referred [here](https://huggingfac
 
 Finally, wait for the progress bar completed, and the pretrained model will be saved in the `pretrain/dnagpt-BPE_updated` directory. In this directory, there will be checkpoint directories, a runs directory, and a saved pretrained model.
 
-## 3. Fine-tune
 
+
+### 2.2 Huawei
+#### Mamba2
+Related scripts are in `scripts/Mamba2_HUAWEI`.
+
+Data preprocess:
+```bash
+python ../scripts/Mamba2_HUAWEI/txt2parquet.py -i ../data/spv3_sample_tiny.txt -o ../data/spv3_sample_tiny.parquet
+
+python ./preprocess_data.py \
+    --input ../data/spv3_sample_tiny.parquet \
+    --tokenizer-type PretrainedFromHF \
+    --tokenizer-name-or-path models/mamba2_130M_spv3  \
+    --output-prefix ./datasets/spv3_sample \
+    --workers 8 \
+    --seq-length 512 
+```
+
+Weights conversion:
+```bash
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+export CUDA_DEVICE_MAX_CONNECTIONS=1
+
+python MindSpeed-LLM/convert_ckpt_v2.py \
+    --load-model-type hf \
+    --save-model-type mg \
+    --load-dir models/mamba2_130M_spv3 \
+    --save-dir models/mamba2_130M_spv3_mg \
+    --target-tensor-parallel-size 1 \
+    --target-pipeline-parallel-size 1 \
+    --hidden-size 768 \
+    --mamba-state-dim 128 \
+    --mamba-head-dim 64 \
+    --mamba-num-groups 1 \
+    --model-type-hf 'mamba2'
+```
+
+Pretrain:
+```bash
+bash ../../scripts/Mamba2_HUAWEI/pretrain_mamba2_130M.sh    
+```
+Script needs to be modified according to your model size and training arguments.
+
+
+#### Other models
+Other models' training methods are the same as Nvidia.
+Pretrain:
+```bash
+python model_pretrain_from_scratch.py \
+    --model_name_or_path plant-dnabert-BPE \
+    --train_data data/spv3_sample_tiny.txt \
+    --per_device_train_batch_size 16 \
+    --gradient_accumulation_steps 24 \
+    --num_train_epochs 5 \
+    --learning_rate 1e-4 \
+    --warmup_ratio 0.05 \
+    --bf16 \
+    --logging_strategy steps \
+    --logging_steps 100 \
+    --save_strategy steps \
+    --save_steps 500 \
+    --output_dir pretrain/dnabert-BPE_updated
+```
+
+
+
+## 3. Fine-tune
+### 3.1 nvidia
 To fine-tune the plant DNA LLMs, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local. You can use `git clone` (which may require `git-lfs` to be installed) to retrieve the model or directly download the model from the website.
 
 In the activated `llms` python environment, use the `model_finetune.py` script to fine-tune a model for downstream task.  
@@ -227,11 +380,57 @@ Detailed descriptions of the arguments can be referred [here](https://huggingfac
 
 Finally, wait for the progress bar completed, and the fine-tuned model will be saved in the `plant-dnagpt-BPE-promoter` directory. In this directory, there will be a checkpoint directory, a runs directory, and a saved fine-tuning model.
 
+### 3.2 Huawei 
+#### 3.2.1 Mamba2
+Finetune:
+```bash
+bash finetune_mamba2.sh
+```
+Script needs to be modified according to your model size, finetune_mamba2.py path and training arguments.
+
+#### Other models
+Other models' training methods are the same as Nvidia.
+```bash
+python model_finetune.py \
+    --model_name_or_path plant-dnabert-BPE \
+    --train_data data/train.csv \
+    --test_data data/test.csv \
+    --eval_data data/dev.csv \
+    --train_task classification \
+    --labels 'Not promoter;Core promoter' \
+    --run_name plant_dnabert_BPE_promoter \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 8 \
+    --learning_rate 1e-5 \
+    --num_train_epochs 5 \
+    --load_best_model_at_end \
+    --metric_for_best_model 'f1' \
+    --save_strategy epoch \
+    --logging_strategy epoch \
+    --evaluation_strategy epoch \
+    --output_dir finetune/plant-dnabert-BPE-promoter
+```
+
+
 ## 4. Inference
 
 To use a fine-tuned model for inference, please first download the desired models from [HuggingFace](https://huggingface.co/zhangtaolab) or [ModelScope](https://www.modelscope.cn/organization/zhangtaolab) to local or provide a model trained by yourself.
 
-* Here is the [finetune models list](docs/en/resources/finetune_models.md)
+* Here is the recommended models for different genomic tasks
+
+|           Genomic task         |      Recommended model    | Link |
+| ------------------------------ | ------------------------- | ---- |
+| Core promoters                 | Plant DNAGPT 6mer         | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagpt-6mer-promoter) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagpt-6mer-promoter) |
+| Sequence conservation          | Plant DNAMamba 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-conservation) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-conservation) |
+| H3K27ac                        | Plant DNAMamba 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-6mer-H3K27ac) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-6mer-H3K27ac) |
+| H3K27me3                       | Plant DNAMamba 4mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-4mer-H3K27me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-4mer-H3K27me3) |
+| H3K4me3                        | Plant DNAMamba 5mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-5mer-H3K4me3) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-5mer-H3K4me3) |
+| lncRNAs                        | Plant DNAGemma 6mer       | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-6mer-lncRNAs) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-6mer-lncRNAs) |
+| Open chromatin                 | Plant DNAMamba BPE        | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnamamba-BPE-open_chromatin) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnamamba-BPE-open_chromatin) |
+| Promoter strength (leaf)       | Plant NT singlebase       | [Huggingface](https://huggingface.co/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-nucleotide-transformer-singlebase-promoter_strength_leaf) |
+| Promoter strength (protoplast) | Plant DNAGemma singlebase | [Huggingface](https://huggingface.co/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) / [Modelscope](https://modelscope.cn/models/zhangtaolab/plant-dnagemma-singlebase-promoter_strength_protoplast) |
+
+* All the [finetune models list](docs/en/resources/finetune_models.md)
 
 We use Plant DNAGPT model as example to predict active core promoter in plants.
 
@@ -268,7 +467,6 @@ In this script:
 ![copy](imgs/huggingface_copy.png)
 
 Output results contains the original sequence, input sequence length. If the task type is classification, predicted label and probability of each label will provide; If the task type is regression, a predicted score will provide.
-
 
 ### 5. Docker implementation for model inference
 
