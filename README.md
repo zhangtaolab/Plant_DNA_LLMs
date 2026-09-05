@@ -9,6 +9,9 @@
   <a href="README_zh.md" target="_blank"><b>简体中文</b></a>
 </p>
 
+# Our New Model  
+[PlantHelixSeek](https://github.com/zhangtaolab/PlantHelixSeek)
+
 ## 0. Demo for plant DNA LLMs prediction
 
 ![demo](imgs/plantllm.gif)
