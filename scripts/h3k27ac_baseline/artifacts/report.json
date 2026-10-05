@@ -1,0 +1,113 @@
+{
+  "task": "H3K27ac binary classification; not expression prediction",
+  "seed": 7,
+  "package_versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.0",
+    "joblib": "1.6.0"
+  },
+  "data_sha256": {
+    "train": "1c8a1357b8af1e889e63d3f16c46c5ed3cd20f9659df098bd160cfb54c0986b0",
+    "dev": "286afa770ee9a585f0aeed91804803b68ee2513f73bfff5eda3faa336d768c05",
+    "test": "d171ef52ae0eca0e5c62867400b629bbbfdd55b258cf413c066519bfc3ed013d"
+  },
+  "audit": {
+    "train": {
+      "kept": 40000,
+      "positive_fraction": 0.499225,
+      "exact_or_RC_duplicates_removed": 0,
+      "invalid_removed": 0,
+      "min_length": 100,
+      "max_length": 2000
+    },
+    "dev": {
+      "kept": 10000,
+      "positive_fraction": 0.4997,
+      "exact_or_RC_duplicates_removed": 0,
+      "invalid_removed": 0,
+      "min_length": 126,
+      "max_length": 2000
+    },
+    "test": {
+      "kept": 10000,
+      "positive_fraction": 0.4996,
+      "exact_or_RC_duplicates_removed": 0,
+      "invalid_removed": 0,
+      "min_length": 130,
+      "max_length": 2000
+    }
+  },
+  "model_selection": [
+    {
+      "C": 0.1,
+      "dev_auroc": 0.7602248336809401,
+      "iterations": [
+        4
+      ]
+    },
+    {
+      "C": 1.0,
+      "dev_auroc": 0.7674203562713282,
+      "iterations": [
+        5
+      ]
+    },
+    {
+      "C": 10.0,
+      "dev_auroc": 0.7685974366950772,
+      "iterations": [
+        6
+      ]
+    }
+  ],
+  "selected_C": 10.0,
+  "dev": {
+    "composition_baseline": {
+      "auroc": 0.6754105631478027,
+      "auprc": 0.6788068094370545,
+      "mcc": 0.2504673384112372,
+      "f1": 0.6489312050779427,
+      "accuracy": 0.6239,
+      "balanced_accuracy": 0.6239430046194816,
+      "threshold": 0.45000000000000007
+    },
+    "canonical_5mer_tfidf": {
+      "auroc": 0.7685974366950772,
+      "auprc": 0.7757168768783778,
+      "mcc": 0.4108114917060791,
+      "f1": 0.6938479095341841,
+      "accuracy": 0.7049,
+      "balanced_accuracy": 0.7048785937562938,
+      "threshold": 0.51
+    }
+  },
+  "test": {
+    "composition_baseline": {
+      "auroc": 0.6739485713270856,
+      "auprc": 0.677700373379574,
+      "mcc": 0.23614073415153175,
+      "f1": 0.6430766365583388,
+      "accuracy": 0.6167,
+      "balanced_accuracy": 0.6167595147260894,
+      "threshold": 0.45000000000000007
+    },
+    "canonical_5mer_tfidf": {
+      "auroc": 0.7704779731059028,
+      "auprc": 0.7751644138662979,
+      "mcc": 0.4108117059079859,
+      "f1": 0.694995864350703,
+      "accuracy": 0.705,
+      "balanced_accuracy": 0.7049742111834951,
+      "threshold": 0.51
+    }
+  },
+  "limits": [
+    "Exact and reverse-complement duplicates removed, but homologous/overlapping fragments may remain.",
+    "Source CSV files lack chromosome, species, tissue, and coordinate metadata: chromosome/species split cannot be established.",
+    "This result is not a comparison against a pretrained PDLLM, DNABERT-2, or Caduceus.",
+    "H3K27ac labels cannot serve as gene expression or accession/trait labels."
+  ],
+  "seconds": 30.250617272000454,
+  "test_auroc_gain": 0.09652940177881719
+}
